@@ -5,14 +5,10 @@ name = "pypi"
 
 [packages]
 kubernetes = "*"
-docker = "*"
 arrow = "*"
 tqdm = "*"
 
 [dev-packages]
-black = "*"
-isort = "*"
-flake8 = "*"
 
 [requires]
 python_version = "3.10"

@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: server-sandbox-pods-binding
+  namespace: sandbox
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: server-sandbox-pods
+subjects:
+  - kind: ServiceAccount
+    name: bbcs-server
+    namespace: server
