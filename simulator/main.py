@@ -5,6 +5,8 @@ import os  # I didn't even use this lol
 
 import pygame  # not really necessary, but might be easier to use. Currently pygame is a placeholder to show that the loop works.
 
+from troop import troop, troop_actions_queue
+
 pygame.font.init()  # Initialize font library, idk why it still says not initialized
 
 WIDTH, HEIGHT = 900, 500  # Display size
@@ -18,15 +20,6 @@ pygame.display.update()
 pygame.display.set_caption("CodeCombat placeholder screen")
 
 FPS = 60  # Limits game to run at 60FPS, game will run at <= 60 FPS max
-
-
-class Troop:  # Please fix this
-    def __init__(self, Id, health, dmg, range, speed):
-        self.Id = Id
-        self.health = health
-        self.dmg = dmg
-        self.range = range
-        self.speed = speed
 
 
 class Base:
