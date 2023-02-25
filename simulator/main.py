@@ -72,5 +72,8 @@ def main():
         # For every action in queue
         # TODO: @iamnumber4#0655
 
+    # Prepare Big JSON for all that has happened in the simulator
+    # TODO: @Legi_boY#6261
+
 
 main()
