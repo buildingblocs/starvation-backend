@@ -1,28 +1,114 @@
-# Troop class
-from queue import Queue
-troop_actions_queue = Queue()
-class troop:
+# Preparing API functions
+LEFT_BASE_POS  = 0
+RIGHT_BASE_POS = 1000
+
+leftTroops = []
+rightTroops = []
+
+def summonTroops(level):
+    # TODO: Balance skill point scaling
+    skill_points = 4 + 2 * level
+    # Create and append
+    leftTroops.append(LeftPlayerTroop(len(leftTroops) + 1,   skill_points, LEFT_BASE_POS))
+    rightTroops.append(RightPlayerTroop(-len(rightTroops) -1, skill_points, RIGHT_BASE_POS))
+    pass
+
+
+def enemiesWithinRange(troop):
+    # TODO: @howcaniusethispleasehelpme#7777
+    pass
+
+
+def getFriendlyId(self):
+    # TODO: @howcaniusethispleasehelpme#7777
+    pass
+
+
+def distanceToEntity(troop1, id):
+    # TODO: @howcaniusethispleasehelpme#7777
+    pass
+
+
+# Troop actions (array because need to sort by action type)
+troop_actions_list = []
+
+
+# Game Object Functions
+class Troop:
     '''
     troop_id: id of the troop
     health: troop health
     position: x coordinate
-    current_level: the current level of the truth
+
+    "Hidden" Variables
+    _rng: the range of the troop (can attack if distance is <= range)
+    _dmg: the dmg of the troop (when attack, enemy.health -= self.dmg)
+    _spd: the speed of the troop (px per second)
     '''
-    def __init__(self, troop_id, health, position, current_level):
-        self.troop_id = troop_id
-        self.health = health
+
+    def __init__(self, troop_id, skill_points, position):
         self.position = position
-        self.current_level = current_level
+
+        # Health points, damage points, range points, speed points
+        hp, dp, rp, sp = type(self).setSkill(skill_points)
+
+        # Check if points are valid
+        if (hp + dp + rp + sp > skill_points): raise ValueError("Conservation of Points violated")
+        if (hp < 0 or dp < 0 or rp < 0 or sp < 0): raise ValueError("Negative Points allocated!?")
+
+        # Calculating and setting actual values
+        # TODO: Make values balanced maybe
+        self.health = 5 + (hp * 5)
+        self._dmg = 1 + (dp * 2)
+        self._rng = 50 + (rp * 25)
+        self._spd = 10 + (sp * 5)
+
+
     def attack(self, enemy_id):
         # Passes the "attack" action, the troop attacking and the troop attacked
-        troop_actions_queue.put(["attack", self.troop_id, enemy_id])
+        troop_actions_queue.append(["attack", self.troop_id, enemy_id])
+
     def move(self, move_amount):
         # Passes the "move" action, the troop that will be moved and how much by
-        troop_actions_queue.put(["move", self.troop_id, move_amount])
+        troop_actions_queue.append(["move", self.troop_id, move_amount])
+
     def update_health(self, change):
         self.health += change
+
     def update_position(self, change):
         self.position += change
-    def increment_level(self):
-        self.current_level += 1
-        
+
+    def setSkill(skill):
+        print("Called setSkill Parent")
+        return [0, 0, 0, 0]
+
+
+class Base(Troop):
+    """
+    Base is secretly a troop
+    It has all the functions of a troop, but user code is not written
+    """
+    def __init__(self, id, health, position):
+        self.troop_id = id
+        self.health = health
+        self.position = position 
+    
+    def update(self): pass
+
+
+
+# Getting player code
+import playerLeft
+import playerRight
+
+# Subclass for left player's functions
+class LeftPlayerTroop(Troop):
+    # Set the player's functions (I hope)
+    update = playerLeft.decideAction
+    setSkill = playerLeft.distributeSkill
+
+# Subclass for right player's functions
+class RightPlayerTroop(Troop):
+    # Set the player's functions (I hope)
+    update = playerRight.decideAction
+    setSkill = playerRight.distributeSkill
