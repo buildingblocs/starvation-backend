@@ -39,7 +39,7 @@ def main():
     pause = False
 
     # Add bases (which are secretly troops)
-    leftTroops. append(Base(id =  1, health = 250, position = LEFT_BASE_POS))   # Left base, Id = 1, health = 1000
+    leftTroops.append(Base(id =  1, health = 250, position = LEFT_BASE_POS))   # Left base, Id = 1, health = 1000
     rightTroops.append(Base(id = -1, health = 250, position = RIGHT_BASE_POS))  # Right base, Id = -1, health = 1000
 
     # Game Loop

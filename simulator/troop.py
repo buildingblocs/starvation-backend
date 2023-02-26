@@ -2,6 +2,8 @@
 LEFT_BASE_POS  = 0
 RIGHT_BASE_POS = 1000
 
+counter = 0
+
 leftTroops = []
 rightTroops = []
 
@@ -9,24 +11,42 @@ def summonTroops(level):
     # TODO: Balance skill point scaling
     skill_points = 4 + 2 * level
     # Create and append
-    leftTroops.append(LeftPlayerTroop(len(leftTroops) + 1,   skill_points, LEFT_BASE_POS))
+    counter += 1
+    leftTroops.append(LeftPlayerTroop(len(leftTroops) + 1,  skill_points, LEFT_BASE_POS)) 
     rightTroops.append(RightPlayerTroop(-len(rightTroops) -1, skill_points, RIGHT_BASE_POS))
     pass
 
 
 def enemiesWithinRange(troop):
-    # TODO: @howcaniusethispleasehelpme#7777
-    pass
+    enemies = None
+    if troop.troop_id > 0:
+        enemies = rightTroops
+    else:
+        enemies = leftTroops
+    
+    attackable = [i for i in enemies if abs(troop.position - i.position) <= troop._rng]
+    return attackable
 
 
-def getFriendlyId(self):
-    # TODO: @howcaniusethispleasehelpme#7777
-    pass
+def getFriendlyTroops(troop):
+    return leftTroops if troop.troop_id > 0 else rightTroops
 
 
 def distanceToEntity(troop1, id):
-    # TODO: @howcaniusethispleasehelpme#7777
-    pass
+    if id > 0:
+        troop2 = None
+        for i in leftTroops:
+            if (i.troop_id == id):
+                troop2 = i
+    else:
+        troop2 = None
+        for i in rightTroops:
+            if (i.troop_id == id):
+                troop2 = i
+    if (troop2 == None):
+        raise ValueError("Troop does not exist")
+    return abs(troop1.position - troop2.position)
+    
 
 
 # Troop actions (array because need to sort by action type)
@@ -48,7 +68,7 @@ class Troop:
 
     def __init__(self, troop_id, skill_points, position):
         self.position = position
-
+        self.troop_id = troop_id
         # Health points, damage points, range points, speed points
         hp, dp, rp, sp = type(self).setSkill(skill_points)
 
