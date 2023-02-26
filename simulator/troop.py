@@ -2,8 +2,6 @@
 LEFT_BASE_POS  = 0
 RIGHT_BASE_POS = 1000
 
-counter = 0
-
 leftTroops = []
 rightTroops = []
 
@@ -11,7 +9,6 @@ def summonTroops(level):
     # TODO: Balance skill point scaling
     skill_points = 4 + 2 * level
     # Create and append
-    counter += 1
     leftTroops.append(LeftPlayerTroop(len(leftTroops) + 1,  skill_points, LEFT_BASE_POS)) 
     rightTroops.append(RightPlayerTroop(-len(rightTroops) -1, skill_points, RIGHT_BASE_POS))
     pass
@@ -118,17 +115,14 @@ class Base(Troop):
 
 
 # Getting player code
-import playerLeft
-import playerRight
+
 
 # Subclass for left player's functions
 class LeftPlayerTroop(Troop):
     # Set the player's functions (I hope)
-    update = playerLeft.decideAction
-    setSkill = playerLeft.distributeSkill
+     None
 
 # Subclass for right player's functions
 class RightPlayerTroop(Troop):
     # Set the player's functions (I hope)
-    update = playerRight.decideAction
-    setSkill = playerRight.distributeSkill
+    None
