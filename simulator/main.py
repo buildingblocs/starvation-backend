@@ -1,11 +1,11 @@
 # Main Game Loop + Global Variables
 
 import os  # I didn't even use this lol
-import pygame  # not really necessary, but might be easier to use. Currently pygame is a placeholder to show that the loop works.
+import \
+    pygame  # not really necessary, but might be easier to use. Currently pygame is a placeholder to show that the loop works.
 
 # Gotta split up gameAPI, circular import moments
 from troop import *
-
 
 pygame.font.init()  # Initialize font library, idk why it still says not initialized
 
@@ -15,7 +15,6 @@ TIMER_FONT = pygame.font.SysFont("comicsans", 100)  # Haha comic sans go brr
 BLUE = (0, 0, 255)  # Blue color
 background = pygame.Rect(0, 0, WIDTH, HEIGHT)  # Background
 pygame.display.update()
-
 
 pygame.display.set_caption("CodeCombat placeholder screen")
 
@@ -39,8 +38,8 @@ def main():
     pause = False
 
     # Add bases (which are secretly troops)
-    leftTroops.append(Base(id =  1, health = 250, position = LEFT_BASE_POS))   # Left base, Id = 1, health = 1000
-    rightTroops.append(Base(id = -1, health = 250, position = RIGHT_BASE_POS))  # Right base, Id = -1, health = 1000
+    leftTroops.append(Base(id=1, health=250, position=LEFT_BASE_POS))  # Left base, Id = 1, health = 1000
+    rightTroops.append(Base(id=-1, health=250, position=RIGHT_BASE_POS))  # Right base, Id = -1, health = 1000
 
     # Game Loop
     while running:
@@ -51,7 +50,7 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
-        
+
         # Skip game if paused (why is this here!?)
         if pause: continue
 
@@ -64,13 +63,27 @@ def main():
             # Calculate the current number of points, and pass to user function
             summonTroops(seconds_passed // 30)
 
-
         # For every troop, run update function
         for troop in leftTroops: troop.update()
         for troop in rightTroops: troop.update()
-
         # For every action in queue
-        # TODO: @iamnumber4#0655
+        # sort to process attack first
+        troop_actions_list.sort(key=lambda x: x[0])
+        for action in troop_actions_list:  # type: [str, int, int, int]
+            if action[0] == "attack":  # Process attack
+                if action[2] < 0:
+                    # attack right troops
+                    pos = getTroopById(action[2])
+                    leftTroops[pos].update_health(action[3])
+                    if leftTroops[pos].health < 0: leftTroops.pop(pos)
+                else:
+                    pos = getTroopById(action[2])
+                    rightTroops[pos].update_health(action[3])
+                    if rightTroops[pos].health < 0: rightTroops.pop(pos)
+            else:  # Process move
+                if action[1] < 0: rightTroops[getTroopById(action[1])].move(action[2])
+                else: leftTroops[getTroopById(action[1])].move(action[2])
+        troop_actions_list.clear()
 
     # Prepare Big JSON for all that has happened in the simulator
     # TODO: @Legi_boY#6261

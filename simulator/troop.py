@@ -15,12 +15,10 @@ def summonTroops(level):
 
 
 def enemiesWithinRange(troop):
-    enemies = None
     if troop.troop_id > 0:
         enemies = rightTroops
     else:
         enemies = leftTroops
-    
     attackable = [i for i in enemies if abs(troop.position - i.position) <= troop._rng]
     return attackable
 
@@ -33,17 +31,29 @@ def distanceToEntity(troop1, id):
     if id > 0:
         troop2 = None
         for i in leftTroops:
-            if (i.troop_id == id):
+            if i.troop_id == id:
                 troop2 = i
     else:
         troop2 = None
         for i in rightTroops:
-            if (i.troop_id == id):
+            if i.troop_id == id:
                 troop2 = i
-    if (troop2 == None):
+    if troop2 == None:
         raise ValueError("Troop does not exist")
     return abs(troop1.position - troop2.position)
     
+
+def getTroopById(id):
+    pos = 0
+    if id < 0:
+        for i in rightTroops:
+            pos += 1
+            if i.troop_id == id: return pos
+    else:
+        for i in leftTroops:
+            pos += 1
+            if i.troop_id == id: return pos
+    raise ValueError("Troop does not exist")
 
 
 # Troop actions (array because need to sort by action type)
@@ -83,17 +93,21 @@ class Troop:
 
     def attack(self, enemy_id):
         # Passes the "attack" action, the troop attacking and the troop attacked
-        troop_actions_queue.append(["attack", self.troop_id, enemy_id])
+        # check if in range
+        troop_actions_list.append(["attack", self.troop_id, enemy_id, self._dmg])
 
     def move(self, move_amount):
         # Passes the "move" action, the troop that will be moved and how much by
-        troop_actions_queue.append(["move", self.troop_id, move_amount])
+        troop_actions_list.append(["move", self.troop_id, move_amount])
 
     def update_health(self, change):
         self.health += change
 
     def update_position(self, change):
-        self.position += change
+        if self.troop_id < 0: # move the other way
+            self.position -= change
+        else:
+            self.position += change
 
     def setSkill(skill):
         print("Called setSkill Parent")
