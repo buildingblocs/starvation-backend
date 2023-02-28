@@ -96,7 +96,6 @@ def main():
         # for i in rightTroops: print(i.troop_id, i.position)
         
     # Prepare Big JSON for all that has happened in the simulator
-    # TODO: @Legi_boY#6261
         troops = dict()
         for troop in (rightTroops + leftTroops):
             troops[troop.troop_id] = {'Health' : troop.health, 'Position' : troop.position}
