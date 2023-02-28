@@ -3,7 +3,7 @@
 import os  # I didn't even use this lol
 import \
     pygame  # not really necessary, but might be easier to use. Currently pygame is a placeholder to show that the loop works.
-
+import json
 # Gotta split up gameAPI, circular import moments
 from troop import *
 from user import *
@@ -31,6 +31,7 @@ def display_clock(seconds_passed):  # placeholder for screen
 
 def main():
     # Initialisation
+    details = dict()
     clock = pygame.time.Clock()
     pygame.font.init()
     running = True
@@ -50,6 +51,9 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                json_object = json.dumps(details, indent=4)
+                with open("results.json", "w") as outfile:
+                    outfile.write(json_object)
                 pygame.quit()
 
         # Skip game if paused (why is this here!?)
@@ -93,6 +97,12 @@ def main():
         
     # Prepare Big JSON for all that has happened in the simulator
     # TODO: @Legi_boY#6261
-
+        troops = dict()
+        for troop in (rightTroops + leftTroops):
+            troops[troop.troop_id] = {'Health' : troop.health, 'Position' : troop.position}
+        details[time_passed] =  troops
+    json_object = json.dumps(details, indent=4)
+    with open("results.json", "w") as outfile:
+        outfile.write(json_object)
 
 main()
