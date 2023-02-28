@@ -47,12 +47,12 @@ def getTroopById(id):
     pos = 0
     if id < 0:
         for i in rightTroops:
-            pos += 1
             if i.troop_id == id: return pos
+            pos += 1
     else:
         for i in leftTroops:
-            pos += 1
             if i.troop_id == id: return pos
+            pos += 1
     raise ValueError("Troop does not exist")
 
 
@@ -103,11 +103,11 @@ class Troop:
     def update_health(self, change):
         self.health += change
 
-    def update_position(self, change):
+    def update_position(self, direction):
         if self.troop_id < 0: # move the other way
-            self.position -= change
+            self.position -= self._spd * direction
         else:
-            self.position += change
+            self.position += self._spd * direction
 
     def setSkill(skill):
         print("Called setSkill Parent")
@@ -134,9 +134,9 @@ class Base(Troop):
 # Subclass for left player's functions
 class LeftPlayerTroop(Troop):
     # Set the player's functions (I hope)
-     None
+    def update(self): pass
 
 # Subclass for right player's functions
 class RightPlayerTroop(Troop):
     # Set the player's functions (I hope)
-    None
+    def update(self): pass

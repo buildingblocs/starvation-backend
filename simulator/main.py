@@ -6,6 +6,7 @@ import \
 
 # Gotta split up gameAPI, circular import moments
 from troop import *
+from user import *
 
 pygame.font.init()  # Initialize font library, idk why it still says not initialized
 
@@ -71,20 +72,25 @@ def main():
         troop_actions_list.sort(key=lambda x: x[0])
         for action in troop_actions_list:  # type: [str, int, int, int]
             if action[0] == "attack":  # Process attack
-                if action[2] < 0:
+                if action[2].troop_id < 0:
                     # attack right troops
-                    pos = getTroopById(action[2])
-                    leftTroops[pos].update_health(action[3])
-                    if leftTroops[pos].health < 0: leftTroops.pop(pos)
+                    pos = getTroopById(action[2].troop_id)
+                    action[2].update_health(action[3])
+                    if action[2].health < 0: leftTroops.pop(pos)
                 else:
-                    pos = getTroopById(action[2])
+                    pos = getTroopById(action[2].troop_id)
                     rightTroops[pos].update_health(action[3])
                     if rightTroops[pos].health < 0: rightTroops.pop(pos)
             else:  # Process move
-                if action[1] < 0: rightTroops[getTroopById(action[1])].move(action[2])
-                else: leftTroops[getTroopById(action[1])].move(action[2])
+                if action[1] < 0: rightTroops[getTroopById(action[1])].update_position(action[2])
+                else: leftTroops[getTroopById(action[1])].update_position(action[2])
+
         troop_actions_list.clear()
 
+        # Debugging COde to show every troop and their position
+        # for i in leftTroops: print(i.troop_id, i.position)
+        # for i in rightTroops: print(i.troop_id, i.position)
+        
     # Prepare Big JSON for all that has happened in the simulator
     # TODO: @Legi_boY#6261
 
