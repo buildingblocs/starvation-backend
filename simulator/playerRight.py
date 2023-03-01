@@ -1,4 +1,4 @@
-from troop import enemiesWithinRange, getFriendlyTroops, distanceToEntity
+from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity
 # Insert the import statements above programatically (user not supposed to write this)
 
 # Sample player code
