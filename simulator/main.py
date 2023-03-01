@@ -31,7 +31,7 @@ def display_clock(seconds_passed):  # placeholder for screen
 
 def main():
     # Initialisation
-    details = dict()
+    details = []
     clock = pygame.time.Clock()
     pygame.font.init()
     running = True
@@ -99,7 +99,7 @@ def main():
         troops = dict()
         for troop in (rightTroops + leftTroops):
             troops[troop.troop_id] = {'Health' : troop.health, 'Position' : troop.position}
-        details[time_passed] =  troops
+        details.append(troops)
     json_object = json.dumps(details, indent=4)
     with open("results.json", "w") as outfile:
         outfile.write(json_object)

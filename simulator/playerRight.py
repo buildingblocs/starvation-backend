@@ -8,4 +8,4 @@ def distributeSkill(points):
 def decideAction(self):
     attackable = enemiesWithinRange(self)
     if (len(attackable) != 0): self.attack(attackable[0])
-    else: self.move(-1)
+    else: self.move(1)
