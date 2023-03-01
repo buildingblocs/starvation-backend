@@ -77,3 +77,12 @@ with open(fp / "server-deployment.yml") as f:
             raise
         apps.delete_namespaced_deployment(name="server-deployment", namespace="server")
         apps.create_namespaced_deployment(body=dep, namespace="server")
+
+with open(fp / "server-service.yml") as f:
+    dep = yaml.safe_load(f)
+    try:
+        client.create_namespaced_service(body=dep, namespace="server")
+    except kubernetes.client.ApiException as e:
+        if e.reason != "Conflict":
+            raise
+        client.replace_namespaced_service(name="server-service", namespace="server", body=dep)
