@@ -80,11 +80,10 @@ def main():
                     # attack right troops
                     pos = getTroopById(action[2].troop_id)
                     action[2].update_health(-action[3])
-                    if action[2].health < 0: leftTroops.pop(pos)
                 else:
+                    print(action[2].troop_id)
                     pos = getTroopById(action[2].troop_id)
                     rightTroops[pos].update_health(-action[3])
-                    if rightTroops[pos].health < 0: rightTroops.pop(pos)
             else:  # Process move
                 if action[1] < 0: rightTroops[getTroopById(action[1])].update_position(action[2])
                 else: leftTroops[getTroopById(action[1])].update_position(action[2])
@@ -95,11 +94,19 @@ def main():
         # for i in leftTroops: print(i.troop_id, i.position)
         # for i in rightTroops: print(i.troop_id, i.position)
         
-    # Prepare Big JSON for all that has happened in the simulator
+        # Prepare Big JSON for all that has happened in the simulator
         troops = dict()
         for troop in (rightTroops + leftTroops):
             troops[troop.troop_id] = {'Health' : troop.health, 'Position' : troop.position}
         details.append(troops)
+        
+        # Delete all dead troops
+        for ind, troop in enumerate(rightTroops): 
+            if troop.health < 0: rightTroops.pop(ind)
+        for ind, troop in enumerate(leftTroops): 
+            if troop.health < 0: leftTroops.pop(ind)
+
+
     json_object = json.dumps(details, indent=4)
     with open("results.json", "w") as outfile:
         outfile.write(json_object)
