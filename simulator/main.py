@@ -79,11 +79,11 @@ def main():
                 if action[2].troop_id < 0:
                     # attack right troops
                     pos = getTroopById(action[2].troop_id)
-                    action[2].update_health(action[3])
+                    action[2].update_health(-action[3])
                     if action[2].health < 0: leftTroops.pop(pos)
                 else:
                     pos = getTroopById(action[2].troop_id)
-                    rightTroops[pos].update_health(action[3])
+                    rightTroops[pos].update_health(-action[3])
                     if rightTroops[pos].health < 0: rightTroops.pop(pos)
             else:  # Process move
                 if action[1] < 0: rightTroops[getTroopById(action[1])].update_position(action[2])
