@@ -7,6 +7,8 @@ name = "pypi"
 kubernetes = "*"
 arrow = "*"
 tqdm = "*"
+Flask = "*"
+Flask-Cors = "*"
 
 [dev-packages]
 
