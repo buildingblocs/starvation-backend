@@ -9,6 +9,10 @@ app = Flask(__name__)
 app.secret_key = "super_secret_key"
 CORS(app)
 
+@app.route("/")
+def home():
+    return "<h1>Hello World</h1>"
+
 @app.route("/sendCode", methods=["POST"])
 def sendCode():
     code = request.get_json()['code']
@@ -16,4 +20,4 @@ def sendCode():
     return jsonify({"output": sandbox.sandbox(imports + code)});
 
 if __name__ == "__main__":
-    app.run(port=8080)
+    app.run(host="0.0.0.0", port=3000)
