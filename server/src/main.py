@@ -17,7 +17,7 @@ def home():
 def sendCode():
     code = request.get_json()['code']
     imports = "from troop import enemiesWithinRange, getFriendlyTroops, distanceToEntity\n"
-    return jsonify({"output": sandbox.sandbox(imports + code)});
+    return jsonify({"output": sandbox.sandbox(imports + code)})
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000)

@@ -1,46 +1,9 @@
-# Docker Sandbox
-(originally made for IO solution judging)
+# Starvation-Backend
 
-## Setup
-1. Install docker
+Usage steps:
 
-Follow instructions [here](https://docs.docker.com/get-docker/)
-  
-2. Install `pipenv` (virtual environment manager)
-
-```
-pip install --user pipenv
-```
-
-3. Install dependencies via `pipenv`
-
-```
-pipenv install
-```
-
-4. Activate the virtual environment
-
-```
-pipenv shell
-```
-
-5. Run `docker/judging-image.py` to make the judge image
-
-```
-cd docker
-python judging-image.py
-```
-
-6. (optional) Test the sandbox
-
-```
-cd sandbox
-python sandbox.py
-```
-
-## Usage
-Run `validator.py` and provide a filename to test.
-It will judge the code for you.
-
-
-
+1. Install `minikube`
+2. Run `minikube docker-env` and copy the command.
+3. Use docker to build `bbcs/server` (Dockerfile in server/src) and `bbcs/sandbox` (Dockerfile in server/src/sandbox)
+   - Command: `docker build -t bbcs/server <path to server dockerfile>` 
+4. Run `setup_k8s.py` in `server/k8s`, which will deploy the server.
