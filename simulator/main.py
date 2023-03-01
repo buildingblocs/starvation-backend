@@ -1,16 +1,8 @@
 # Main Game Loop + Global Variables
-
 import json
-# Gotta split up gameAPI, circular import moments
+
 from troop import *
 from user import *
-
-
-
-
-
-
-
 
 def main():
     # Initialisation

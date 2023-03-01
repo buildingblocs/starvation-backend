@@ -69,10 +69,6 @@ class Base(Troop):
     def update(self): pass
 
 
-
-# Getting player code
-
-
 # Subclass for left player's functions
 class LeftPlayerTroop(Troop):
     # Set the player's functions (I hope)
