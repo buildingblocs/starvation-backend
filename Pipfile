@@ -8,6 +8,7 @@ kubernetes = "*"
 docker = "*"
 arrow = "*"
 tqdm = "*"
+pygame = "*"
 
 [dev-packages]
 black = "*"
