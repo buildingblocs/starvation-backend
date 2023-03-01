@@ -48,6 +48,10 @@ def main():
         clock.tick(FPS)
         display_clock(seconds_passed)
 
+        # Check if base is still alive
+        if len(leftTroops) == 0 or leftTroops[0].troop_id != 1: break
+        if len(rightTroops) == 0 or rightTroops[0].troop_id != -1: break
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
