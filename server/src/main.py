@@ -13,7 +13,7 @@ CORS(app)
 def sendCode():
     code = request.get_json()['code']
     imports = "from troop import enemiesWithinRange, getFriendlyTroops, distanceToEntity\n"
-    return jsonify({"output": sandbox.sandbox(imports + code)});
+    return jsonify({"output": sandbox.sandbox(imports + code)})
 
 if __name__ == "__main__":
     app.run(port=8080)
