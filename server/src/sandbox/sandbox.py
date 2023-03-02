@@ -35,7 +35,9 @@ def sandbox(solution_content):
     print("Starting judging...")
 
     # 1s total wait time
-    for i in range(10):
+    #for i in range(10):
+    # any amount of wait time lmao
+    while True:
         time.sleep(0.1)
 
         pod = client.read_namespaced_pod(name=sandbox_name, namespace="sandbox")
