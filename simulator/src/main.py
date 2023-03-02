@@ -1,39 +1,38 @@
 # Main Game Loop + Global Variables
 
 import os  # I didn't even use this lol
-import \
-    pygame  # not really necessary, but might be easier to use. Currently pygame is a placeholder to show that the loop works.
+# import pygame  # not really necessary, but might be easier to use. Currently pygame is a placeholder to show that the loop works.
 import json
 # Gotta split up gameAPI, circular import moments
 from troop import *
 from user import *
 
-pygame.font.init()  # Initialize font library, idk why it still says not initialized
+#pygame.font.init()  # Initialize font library, idk why it still says not initialized
 
-WIDTH, HEIGHT = 900, 500  # Display size
-WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))  # Game screen, exists to show that the clock works
-TIMER_FONT = pygame.font.SysFont("comicsans", 100)  # Haha comic sans go brr
-BLUE = (0, 0, 255)  # Blue color
-background = pygame.Rect(0, 0, WIDTH, HEIGHT)  # Background
-pygame.display.update()
+#WIDTH, HEIGHT = 900, 500  # Display size
+#WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))  # Game screen, exists to show that the clock works
+#TIMER_FONT = pygame.font.SysFont("comicsans", 100)  # Haha comic sans go brr
+#BLUE = (0, 0, 255)  # Blue color
+#background = pygame.Rect(0, 0, WIDTH, HEIGHT)  # Background
+#pygame.display.update()
 
-pygame.display.set_caption("CodeCombat placeholder screen")
+#pygame.display.set_caption("CodeCombat placeholder screen")
 
 FPS = 60  # Limits game to run at 60FPS, game will run at <= 60 FPS max
 
 
-def display_clock(seconds_passed):  # placeholder for screen
-    pygame.draw.rect(WINDOW, (0, 0, 255), background)  # Wipe away last frame
-    timer_text = TIMER_FONT.render("Time passed: " + str(seconds_passed), 1, (255, 255, 255))  # Render timer
-    WINDOW.blit(timer_text, (100, 160))  # Paint timer onto screen
-    pygame.display.update()  # Update screen (very essential)
+# def display_clock(seconds_passed):  # placeholder for screen
+#     pygame.draw.rect(WINDOW, (0, 0, 255), background)  # Wipe away last frame
+#     timer_text = TIMER_FONT.render("Time passed: " + str(seconds_passed), 1, (255, 255, 255))  # Render timer
+#     WINDOW.blit(timer_text, (100, 160))  # Paint timer onto screen
+#     pygame.display.update()  # Update screen (very essential)
 
 
 def main():
     # Initialisation
     details = []
-    clock = pygame.time.Clock()
-    pygame.font.init()
+    #clock = pygame.time.Clock()
+    #pygame.font.init()
     running = True
     time_passed = 0
     seconds_passed = 0
@@ -45,20 +44,20 @@ def main():
 
     # Game Loop
     while running:
-        clock.tick(FPS)
-        display_clock(seconds_passed)
+        #clock.tick(FPS)
+        #display_clock(seconds_passed)
 
         # Check if base is still alive
         if len(leftTroops) == 0 or leftTroops[0].troop_id != 1: break
         if len(rightTroops) == 0 or rightTroops[0].troop_id != -1: break
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-                json_object = json.dumps(details, indent=4)
-                with open("results.json", "w") as outfile:
-                    outfile.write(json_object)
-                pygame.quit()
+        # for event in pygame.event.get():
+        #     if event.type == pygame.QUIT:
+        #         run = False
+        #         json_object = json.dumps(details, indent=4)
+        #         with open("results.json", "w") as outfile:
+        #             outfile.write(json_object)
+        #         pygame.quit()
 
         # Skip game if paused (why is this here!?)
         if pause: continue
