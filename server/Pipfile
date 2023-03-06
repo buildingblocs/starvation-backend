@@ -9,6 +9,7 @@ arrow = "*"
 tqdm = "*"
 Flask = "*"
 Flask-Cors = "*"
+orjson = "*"
 
 [dev-packages]
 

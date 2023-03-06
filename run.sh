@@ -2,6 +2,9 @@
 # set docker cr to minikube
 eval $(minikube -p minikube docker-env)
 
+# set the logs flush frequency
+kubectl --log-flush-frequency=0.2s >/dev/null
+
 # server
 docker build -t bbcs/server ./server
 

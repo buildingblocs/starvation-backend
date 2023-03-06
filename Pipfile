@@ -9,6 +9,7 @@ docker = "*"
 arrow = "*"
 tqdm = "*"
 pygame = "*"
+orjson = "*"
 
 [dev-packages]
 black = "*"

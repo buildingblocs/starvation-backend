@@ -2,7 +2,7 @@
 
 import os  # I didn't even use this lol
 # import pygame  # not really necessary, but might be easier to use. Currently pygame is a placeholder to show that the loop works.
-import json
+import orjson
 # Gotta split up gameAPI, circular import moments
 from troop import *
 from user import *
@@ -101,7 +101,7 @@ def main():
         # Prepare Big JSON for all that has happened in the simulator
         troops = dict()
         for troop in (rightTroops + leftTroops):
-            troops[troop.troop_id] = {'Health' : troop.health, 'Position' : troop.position}
+            troops[str(troop.troop_id)] = {'Health' : troop.health, 'Position' : troop.position}
         details.append(troops)
         
         # Delete all dead troops
@@ -111,8 +111,8 @@ def main():
             if troop.health < 0: leftTroops.pop(ind)
 
 
-    json_object = json.dumps(details, indent=4)
-    with open("results.json", "w") as outfile:
+    json_object = orjson.dumps(details)
+    with open("results.json", "wb") as outfile:
         outfile.write(json_object)
 
 main()

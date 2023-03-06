@@ -4,6 +4,7 @@ from pathlib import Path
 
 import kubernetes
 import yaml
+import orjson
 
 
 def dummy_print(*args):
@@ -37,7 +38,9 @@ def sandbox(solution_content):
     # 1s total wait time
     #for i in range(10):
     # any amount of wait time lmao
-    while True:
+    # bro you want someone to just be able to sleep for 70 years???
+    # 10s TL
+    for i in range(100):
         time.sleep(0.1)
 
         pod = client.read_namespaced_pod(name=sandbox_name, namespace="sandbox")
@@ -49,12 +52,23 @@ def sandbox(solution_content):
 
     if pod.status == "Running":
         print("Killing")
-        client.delete_namespaced_pod(name=sandbox_name, namespace="sandbox", grace_period_seconds=0)
+        client.delete_namespaced_pod(name=sandbox_name, namespace="sandbox")
         return (False, 0)
 
-    logs = client.read_namespaced_pod_log(name=sandbox_name, namespace="sandbox")
+    if pod.status == "Failed":
+        print("Bad exit code")
+        return (False, 0)
 
-    return (True, logs.strip())
+    logs = client.read_namespaced_pod_log(name=sandbox_name, namespace="sandbox", follow=True)
+
+    json_out = logs.strip()
+
+    try:
+        ret = orjson.loads(json_out.replace("'", '"'))
+    except orjson.JSONDecodeError as e:
+        return (False, str(e))
+
+    return (True, ret)
 
 
 if __name__ != "__main__":
