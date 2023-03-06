@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: server-deployment
   labels:
-    app: server
+    app: server-deployment
   namespace: server
 spec:
   selector:
     matchLabels:
-      app: server
+      app: server-deployment
   template:
     metadata:
       labels:
-        app: server
+        app: server-deployment
     spec:
       serviceAccountName: bbcs-server
       containers:
