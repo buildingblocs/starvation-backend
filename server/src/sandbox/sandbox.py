@@ -45,17 +45,17 @@ def sandbox(solution_content):
 
         pod = client.read_namespaced_pod(name=sandbox_name, namespace="sandbox")
 
-        if pod.status != "Running":
+        if pod.status.phase != "Running":
             break
 
     print("Ending judging...")
 
-    if pod.status == "Running":
+    if pod.status.phase == "Running":
         print("Killing")
         client.delete_namespaced_pod(name=sandbox_name, namespace="sandbox")
         return (False, 0)
 
-    if pod.status == "Failed":
+    if pod.status.phase == "Failed":
         print("Bad exit code")
         return (False, 0)
 

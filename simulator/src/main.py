@@ -3,7 +3,7 @@
 import os  # I didn't even use this lol
 
 # import pygame  # not really necessary, but might be easier to use. Currently pygame is a placeholder to show that the loop works.
-import orjson
+import json
 
 # Gotta split up gameAPI, circular import moments
 from troop import *
@@ -121,8 +121,8 @@ def main():
             if troop.health < 0:
                 leftTroops.pop(ind)
 
-    json_object = orjson.dumps(details)
-    with open("results.json", "wb") as outfile:
+    json_object = json.dumps(details)
+    with open("results.json", "w") as outfile:
         outfile.write(json_object)
 
 
