@@ -3,8 +3,8 @@ import uuid
 from pathlib import Path
 
 import kubernetes
-import yaml
 import orjson
+import yaml
 
 
 def dummy_print(*args):
@@ -36,7 +36,7 @@ def sandbox(solution_content):
     print("Starting judging...")
 
     # 1s total wait time
-    #for i in range(10):
+    # for i in range(10):
     # any amount of wait time lmao
     # bro you want someone to just be able to sleep for 70 years???
     # 10s TL

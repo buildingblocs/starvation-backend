@@ -1,6 +1,6 @@
-from gameAPI import *
 import playerLeft
 import playerRight
+from gameAPI import *
 
 LeftPlayerTroop.update = playerLeft.decideAction
 LeftPlayerTroop.setSkill = playerLeft.distributeSkill

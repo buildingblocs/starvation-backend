@@ -1,8 +1,11 @@
 # AI for level 1
 def distributeSkill(points):
-    return [points//4, points//4, points//4, points//4 - 1]
+    return [points // 4, points // 4, points // 4, points // 4 - 1]
+
 
 def decideAction(self):
     attackable = enemiesWithinRange(self)
-    if (len(attackable) != 0): attack(self, attackable[0])
-    else: self.move(1)
+    if len(attackable) != 0:
+        attack(self, attackable[0])
+    else:
+        self.move(1)

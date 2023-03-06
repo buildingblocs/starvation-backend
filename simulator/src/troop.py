@@ -1,16 +1,17 @@
 # Preparing API functions
-LEFT_BASE_POS  = 0
+LEFT_BASE_POS = 0
 RIGHT_BASE_POS = 1000
 
 leftTroops = []
 rightTroops = []
 
+
 def summonTroops(level):
     # TODO: Balance skill point scaling
     skill_points = 4 + 2 * level
     # Create and append
-    leftTroops.append(LeftPlayerTroop(len(leftTroops) + 1,  skill_points, LEFT_BASE_POS)) 
-    rightTroops.append(RightPlayerTroop(-len(rightTroops) -1, skill_points, RIGHT_BASE_POS))
+    leftTroops.append(LeftPlayerTroop(len(leftTroops) + 1, skill_points, LEFT_BASE_POS))
+    rightTroops.append(RightPlayerTroop(-len(rightTroops) - 1, skill_points, RIGHT_BASE_POS))
     pass
 
 
@@ -41,17 +42,19 @@ def distanceToEntity(troop1, id):
     if troop2 == None:
         raise ValueError("Troop does not exist")
     return abs(troop1.position - troop2.position)
-    
+
 
 def getTroopById(id):
     pos = 0
     if id < 0:
         for i in rightTroops:
-            if i.troop_id == id: return pos
+            if i.troop_id == id:
+                return pos
             pos += 1
     else:
         for i in leftTroops:
-            if i.troop_id == id: return pos
+            if i.troop_id == id:
+                return pos
             pos += 1
     raise ValueError("Troop does not exist")
 
@@ -62,7 +65,7 @@ troop_actions_list = []
 
 # Game Object Functions
 class Troop:
-    '''
+    """
     troop_id: id of the troop
     health: troop health
     position: x coordinate
@@ -71,7 +74,7 @@ class Troop:
     _rng: the range of the troop (can attack if distance is <= range)
     _dmg: the dmg of the troop (when attack, enemy.health -= self.dmg)
     _spd: the speed of the troop (px per second)
-    '''
+    """
 
     def __init__(self, troop_id, skill_points, position):
         self.position = position
@@ -80,8 +83,10 @@ class Troop:
         hp, dp, rp, sp = type(self).setSkill(skill_points)
 
         # Check if points are valid
-        if (hp + dp + rp + sp > skill_points): raise ValueError("Conservation of Points violated")
-        if (hp < 0 or dp < 0 or rp < 0 or sp < 0): raise ValueError("Negative Points allocated!?")
+        if hp + dp + rp + sp > skill_points:
+            raise ValueError("Conservation of Points violated")
+        if hp < 0 or dp < 0 or rp < 0 or sp < 0:
+            raise ValueError("Negative Points allocated!?")
 
         # Calculating and setting actual values
         # TODO: Make values balanced maybe
@@ -89,7 +94,6 @@ class Troop:
         self._dmg = 1 + (dp * 2)
         self._rng = 50 + (rp * 25)
         self._spd = 10 + (sp * 5)
-
 
     def attack(self, enemy_id):
         # Passes the "attack" action, the troop attacking and the troop attacked
@@ -104,7 +108,7 @@ class Troop:
         self.health += change
 
     def update_position(self, direction):
-        if self.troop_id < 0: # move the other way
+        if self.troop_id < 0:  # move the other way
             self.position -= self._spd * direction
         else:
             self.position += self._spd * direction
@@ -119,13 +123,14 @@ class Base(Troop):
     Base is secretly a troop
     It has all the functions of a troop, but user code is not written
     """
+
     def __init__(self, id, health, position):
         self.troop_id = id
         self.health = health
-        self.position = position 
-    
-    def update(self): pass
+        self.position = position
 
+    def update(self):
+        pass
 
 
 # Getting player code
@@ -134,9 +139,12 @@ class Base(Troop):
 # Subclass for left player's functions
 class LeftPlayerTroop(Troop):
     # Set the player's functions (I hope)
-    def update(self): pass
+    def update(self):
+        pass
+
 
 # Subclass for right player's functions
 class RightPlayerTroop(Troop):
     # Set the player's functions (I hope)
-    def update(self): pass
+    def update(self):
+        pass

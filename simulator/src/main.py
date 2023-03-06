@@ -1,22 +1,24 @@
 # Main Game Loop + Global Variables
 
 import os  # I didn't even use this lol
+
 # import pygame  # not really necessary, but might be easier to use. Currently pygame is a placeholder to show that the loop works.
 import orjson
+
 # Gotta split up gameAPI, circular import moments
 from troop import *
 from user import *
 
-#pygame.font.init()  # Initialize font library, idk why it still says not initialized
+# pygame.font.init()  # Initialize font library, idk why it still says not initialized
 
-#WIDTH, HEIGHT = 900, 500  # Display size
-#WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))  # Game screen, exists to show that the clock works
-#TIMER_FONT = pygame.font.SysFont("comicsans", 100)  # Haha comic sans go brr
-#BLUE = (0, 0, 255)  # Blue color
-#background = pygame.Rect(0, 0, WIDTH, HEIGHT)  # Background
-#pygame.display.update()
+# WIDTH, HEIGHT = 900, 500  # Display size
+# WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))  # Game screen, exists to show that the clock works
+# TIMER_FONT = pygame.font.SysFont("comicsans", 100)  # Haha comic sans go brr
+# BLUE = (0, 0, 255)  # Blue color
+# background = pygame.Rect(0, 0, WIDTH, HEIGHT)  # Background
+# pygame.display.update()
 
-#pygame.display.set_caption("CodeCombat placeholder screen")
+# pygame.display.set_caption("CodeCombat placeholder screen")
 
 FPS = 60  # Limits game to run at 60FPS, game will run at <= 60 FPS max
 
@@ -31,8 +33,8 @@ FPS = 60  # Limits game to run at 60FPS, game will run at <= 60 FPS max
 def main():
     # Initialisation
     details = []
-    #clock = pygame.time.Clock()
-    #pygame.font.init()
+    # clock = pygame.time.Clock()
+    # pygame.font.init()
     running = True
     time_passed = 0
     seconds_passed = 0
@@ -44,12 +46,14 @@ def main():
 
     # Game Loop
     while running:
-        #clock.tick(FPS)
-        #display_clock(seconds_passed)
+        # clock.tick(FPS)
+        # display_clock(seconds_passed)
 
         # Check if base is still alive
-        if len(leftTroops) == 0 or leftTroops[0].troop_id != 1: break
-        if len(rightTroops) == 0 or rightTroops[0].troop_id != -1: break
+        if len(leftTroops) == 0 or leftTroops[0].troop_id != 1:
+            break
+        if len(rightTroops) == 0 or rightTroops[0].troop_id != -1:
+            break
 
         # for event in pygame.event.get():
         #     if event.type == pygame.QUIT:
@@ -60,7 +64,8 @@ def main():
         #         pygame.quit()
 
         # Skip game if paused (why is this here!?)
-        if pause: continue
+        if pause:
+            continue
 
         time_passed += 1
 
@@ -72,8 +77,10 @@ def main():
             summonTroops(seconds_passed // 30)
 
         # For every troop, run update function
-        for troop in leftTroops: troop.update()
-        for troop in rightTroops: troop.update()
+        for troop in leftTroops:
+            troop.update()
+        for troop in rightTroops:
+            troop.update()
         # For every action in queue
         # sort to process attack first
         troop_actions_list.sort(key=lambda x: x[0])
@@ -83,36 +90,40 @@ def main():
                     # attack right troops
                     pos = getTroopById(action[2].troop_id)
                     leftTroops[pos].update_health(-action[3])
-                    #action[2].update_health(-action[3])
+                    # action[2].update_health(-action[3])
                 else:
-                    #print(action[2].troop_id)
+                    # print(action[2].troop_id)
                     pos = getTroopById(action[2].troop_id)
                     rightTroops[pos].update_health(-action[3])
             else:  # Process move
-                if action[1] < 0: rightTroops[getTroopById(action[1])].update_position(action[2])
-                else: leftTroops[getTroopById(action[1])].update_position(action[2])
+                if action[1] < 0:
+                    rightTroops[getTroopById(action[1])].update_position(action[2])
+                else:
+                    leftTroops[getTroopById(action[1])].update_position(action[2])
 
         troop_actions_list.clear()
 
         # Debugging COde to show every troop and their position
         # for i in leftTroops: print(i.troop_id, i.position)
         # for i in rightTroops: print(i.troop_id, i.position)
-        
+
         # Prepare Big JSON for all that has happened in the simulator
         troops = dict()
-        for troop in (rightTroops + leftTroops):
-            troops[str(troop.troop_id)] = {'Health' : troop.health, 'Position' : troop.position}
+        for troop in rightTroops + leftTroops:
+            troops[str(troop.troop_id)] = {"Health": troop.health, "Position": troop.position}
         details.append(troops)
-        
-        # Delete all dead troops
-        for ind, troop in enumerate(rightTroops): 
-            if troop.health < 0: rightTroops.pop(ind)
-        for ind, troop in enumerate(leftTroops): 
-            if troop.health < 0: leftTroops.pop(ind)
 
+        # Delete all dead troops
+        for ind, troop in enumerate(rightTroops):
+            if troop.health < 0:
+                rightTroops.pop(ind)
+        for ind, troop in enumerate(leftTroops):
+            if troop.health < 0:
+                leftTroops.pop(ind)
 
     json_object = orjson.dumps(details)
     with open("results.json", "wb") as outfile:
         outfile.write(json_object)
+
 
 main()
