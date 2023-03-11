@@ -1,0 +1,47 @@
+{
+    "level_1": {
+        "prepend": "",
+        "append": "def decideAction(self):\n    attackable = enemiesWithinRange(self)\n    if (len(attackable) != 0): attack(self, attackable[0])\n    else: self.move(1)",
+        "template": "def distributePoints(skill_points):\n    health = 0\n    damage = 0\n    range = 0\n    speed = 0\n    return [health, damage, range, speed]\n\n"
+    },
+    "level_2": {
+        "prepend": "from gameAPI import enemiesWithinRange",
+        "append": "",
+        "template": "def distributePoints(skill_points):\n    health = 0\n    damage = 0\n    range = 0\n    speed = 0\n    return [health, damage, range, speed]\n\ndef decideAction(self):\n    enemies = enemiesWithinRange(self) # As an array\n    #self.attack(-1)\n    #self.move(1)"
+    },
+    "level_3": {
+        "prepend": "from gameAPI import enemiesWithinRange",
+        "append": "",
+        "template": "def distributePoints(skill_points):\n    health = 0\n    damage = 0\n    range = 0\n    speed = 0\n    return [health, damage, range, speed]\n\ndef decideAction(self):\n    enemies = enemiesWithinRange(self) # As an array\n    #self.attack(-1)\n    #self.move(1)"
+    },
+    "level_4": {
+        "prepend": "from gameAPI import enemiesWithinRange",
+        "append": "",
+        "template": "def distributePoints(skill_points):\n    health = 0\n    damage = 0\n    range = 0\n    speed = 0\n    return [health, damage, range, speed]\n\ndef decideAction(self):\n    #self.attack(-1)\n    #self.move(1)"
+    },
+    "level_5": {
+        "prepend": "from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity",
+        "append": "",
+        "template": "def distributePoints(skill_points):\n    health = 0\n    damage = 0\n    range = 0\n    speed = 0\n    return [health, damage, range, speed]\n\ndef decideAction(self):\n    enemies = enemiesWithinRange(self)\n    friendlies = getFriendlyTroops(self)\n    distanceToBase = distanceToEntity(self, 1)\n    distanceToFirst = distanceToEntity(self, friendlies[0])\n    #self.attack(-1)\n    #self.move(1)"
+    },
+    "level_6": {
+        "prepend": "",
+        "append": ""
+    },
+    "level_7": {
+        "prepend": "",
+        "append": ""
+    },
+    "level_8": {
+        "prepend": "",
+        "append": ""
+    },
+    "level_9": {
+        "prepend": "",
+        "append": ""
+    },
+    "level_10": {
+        "prepend": "",
+        "append": ""
+    }
+}
