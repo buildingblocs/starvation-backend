@@ -1,16 +1,20 @@
-from troop import distanceToEntity, enemiesWithinRange, getFriendlyTroops
+from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity
 
-# Insert the import statements above programatically (user not supposed to write this)
+# AI for level 5 (Grouping, same as 4)
+cnt = 0
 
-
-# Sample player code
 def distributeSkill(points):
-    return [points // 4, points // 4, points // 4, points // 4]
+    global cnt
+    cnt = (cnt + 1) % 5
 
+    # Nerf their speed power, so that player can actl win
+    return [points//4, points//4 - 1, points//4, points//4]
 
 def decideAction(self):
-    attackable = enemiesWithinRange(self)
-    if len(attackable) != 0:
-        self.attack(attackable[0])
-    else:
-        self.move(1)
+    global cnt
+    enemies = enemiesWithinRange(self)
+
+    # Charge forward if enemy is within range
+    if (len(enemies) > 0): self.attack(enemies[0])
+    elif distanceToEntity(self, 1) > 0 or (len(enemies) == 0) and cnt >= 4: self.move(1)
+    
