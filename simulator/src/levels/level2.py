@@ -1,6 +1,6 @@
 from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity
 
-# AI for level 2 (Sitting Duck)
+# AI for level 2 (Sitting Duck, same as 1)
 def distributeSkill(points):
     return [0, 0, 0, 0]
 

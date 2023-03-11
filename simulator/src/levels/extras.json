@@ -15,18 +15,19 @@
         "template": "def distributePoints(skill_points):\n    health = 0\n    damage = 0\n    range = 0\n    speed = 0\n    return [health, damage, range, speed]\n\ndef decideAction(self):\n    enemies = enemiesWithinRange(self) # As an array\n    #self.attack(-1)\n    #self.move(1)"
     },
     "level_4": {
-        "prepend": "from gameAPI import enemiesWithinRange",
-        "append": "",
-        "template": "def distributePoints(skill_points):\n    health = 0\n    damage = 0\n    range = 0\n    speed = 0\n    return [health, damage, range, speed]\n\ndef decideAction(self):\n    #self.attack(-1)\n    #self.move(1)"
-    },
-    "level_5": {
         "prepend": "from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity",
         "append": "",
         "template": "def distributePoints(skill_points):\n    health = 0\n    damage = 0\n    range = 0\n    speed = 0\n    return [health, damage, range, speed]\n\ndef decideAction(self):\n    enemies = enemiesWithinRange(self)\n    friendlies = getFriendlyTroops(self)\n    distanceToBase = distanceToEntity(self, 1)\n    distanceToFirst = distanceToEntity(self, friendlies[0])\n    #self.attack(-1)\n    #self.move(1)"
     },
+    "level_5": {
+        "prepend": "from gameAPI import enemiesWithinRange",
+        "append": "",
+        "template": "def distributePoints(skill_points):\n    health = 0\n    damage = 0\n    range = 0\n    speed = 0\n    return [health, damage, range, speed]\n\ndef decideAction(self):\n    #self.attack(-1)\n    #self.move(1)"
+    },
     "level_6": {
-        "prepend": "",
-        "append": ""
+        "prepend": "from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity",
+        "append": "",
+        "template": "def distributePoints(skill_points):\n    health = 0\n    damage = 0\n    range = 0\n    speed = 0\n    return [health, damage, range, speed]\n\ndef decideAction(self):\n    #self.attack(-1)\n    #self.move(1)"
     },
     "level_7": {
         "prepend": "",

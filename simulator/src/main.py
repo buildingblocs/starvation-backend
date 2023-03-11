@@ -45,14 +45,16 @@ def main():
     rightTroops.append(Base(id=-1, health=250, position=RIGHT_BASE_POS))  # Right base, Id = -1, health = 1000
 
     # Game Loop
-    while running:
+    for i in range(360000):
         # clock.tick(FPS)
         # display_clock(seconds_passed)
 
         # Check if base is still alive
         if len(leftTroops) == 0 or leftTroops[0].troop_id != 1:
+            print("Right Wins")
             break
         if len(rightTroops) == 0 or rightTroops[0].troop_id != -1:
+            print("Left Wins")
             break
 
         # for event in pygame.event.get():
@@ -104,11 +106,6 @@ def main():
 
         troop_actions_list.clear()
 
-        # Debugging Code to show every troop and their position
-        # for i in leftTroops: print(i.troop_id, i.position, i.health)
-        # for i in rightTroops: print(i.troop_id, i.position, i.health)
-        # print("================================================================")
-
         # Prepare Big JSON for all that has happened in the simulator
         troops = dict()
         for troop in rightTroops + leftTroops:
@@ -117,12 +114,19 @@ def main():
 
         # Delete all dead troops
         for ind, troop in enumerate(rightTroops):
-            if troop.health < 0:
+            if troop.health <= 0:
                 rightTroops.pop(ind)
         for ind, troop in enumerate(leftTroops):
-            if troop.health < 0:
+            if troop.health <= 0:
                 leftTroops.pop(ind)
+    else:
+        print("Draw")
 
+    # Debugging Code to show every troop and their position
+    for i in leftTroops: print(i.troop_id, i.position, i.health)
+    for i in rightTroops: print(i.troop_id, i.position, i.health)
+    print("================================================================")
+    
     json_object = json.dumps(details)
     with open("results.json", "w") as outfile:
         outfile.write(json_object)
