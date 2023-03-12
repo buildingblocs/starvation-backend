@@ -1,6 +1,6 @@
 from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity
 
-# AI for level 4 (Grouping)
+# AI for level 5 (Grouping, same as 4)
 cnt = 0
 
 def distributeSkill(points):

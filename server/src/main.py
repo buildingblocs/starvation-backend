@@ -6,15 +6,14 @@ app = Flask(__name__)
 app.secret_key = "super_secret_key"
 CORS(app)
 
-@app.route("/<name>")
-def home(name):
-    return f"<h1>Hello World, {name}</h1>"
-
+@app.route("/")
+def home():
+    return f"<h1>Starvation Backend :)</h1>"
 
 @app.route("/sendCode", methods=["POST"])
 def sendCode():
     code = request.get_json()["code"]
-    imports = "from troop import enemiesWithinRange, getFriendlyTroops, distanceToEntity\n\n"
+    imports = "from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity\n\n"
     return jsonify(dict(zip(("status", "output"), sandbox.sandbox(imports + code))))
 
 if __name__ == "__main__":

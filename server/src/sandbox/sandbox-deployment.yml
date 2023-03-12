@@ -5,8 +5,8 @@ metadata:
 spec:
   containers:
     - name: sandbox
-      image: bbcs/sandbox
-      imagePullPolicy: Never
+      image: asia-southeast1-docker.pkg.dev/starvation/docker/sandbox:latest
+      imagePullPolicy: Always
       resources:
         limits:
           memory: "128Mi"

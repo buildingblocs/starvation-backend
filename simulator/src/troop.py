@@ -1,69 +1,10 @@
-# Preparing API functions
-LEFT_BASE_POS = 0
-RIGHT_BASE_POS = 1000
-
-leftTroops = []
-rightTroops = []
-
-
-def summonTroops(level):
-    # TODO: Balance skill point scaling
-    skill_points = 4 + 2 * level
-    # Create and append
-    leftTroops.append(LeftPlayerTroop(len(leftTroops) + 1, skill_points, LEFT_BASE_POS))
-    rightTroops.append(RightPlayerTroop(-len(rightTroops) - 1, skill_points, RIGHT_BASE_POS))
-    pass
-
-
-def enemiesWithinRange(troop):
-    if troop.troop_id > 0:
-        enemies = rightTroops
-    else:
-        enemies = leftTroops
-    attackable = [i for i in enemies if abs(troop.position - i.position) <= troop._rng]
-    return attackable
-
-
-def getFriendlyTroops(troop):
-    return leftTroops if troop.troop_id > 0 else rightTroops
-
-
-def distanceToEntity(troop1, id):
-    if id > 0:
-        troop2 = None
-        for i in leftTroops:
-            if i.troop_id == id:
-                troop2 = i
-    else:
-        troop2 = None
-        for i in rightTroops:
-            if i.troop_id == id:
-                troop2 = i
-    if troop2 == None:
-        raise ValueError("Troop does not exist")
-    return abs(troop1.position - troop2.position)
-
-
-def getTroopById(id):
-    pos = 0
-    if id < 0:
-        for i in rightTroops:
-            if i.troop_id == id:
-                return pos
-            pos += 1
-    else:
-        for i in leftTroops:
-            if i.troop_id == id:
-                return pos
-            pos += 1
-    raise ValueError("Troop does not exist")
-
+# Game Object Functions
 
 # Troop actions (array because need to sort by action type)
 troop_actions_list = []
 
+def sign(x): return 1 if x > 0 else 0 if x == 0 else -1
 
-# Game Object Functions
 class Troop:
     """
     troop_id: id of the troop
@@ -74,11 +15,14 @@ class Troop:
     _rng: the range of the troop (can attack if distance is <= range)
     _dmg: the dmg of the troop (when attack, enemy.health -= self.dmg)
     _spd: the speed of the troop (px per second)
+    _action: if True, troop can use an action
     """
 
     def __init__(self, troop_id, skill_points, position):
         self.position = position
         self.troop_id = troop_id
+        self._action = True
+
         # Health points, damage points, range points, speed points
         hp, dp, rp, sp = type(self).setSkill(skill_points)
 
@@ -95,14 +39,21 @@ class Troop:
         self._rng = 50 + (rp * 25)
         self._spd = 10 + (sp * 5)
 
-    def attack(self, enemy_id):
-        # Passes the "attack" action, the troop attacking and the troop attacked
-        # check if in range
-        troop_actions_list.append(["attack", self.troop_id, enemy_id, self._dmg])
+    def attack(self, enemy):
+        # Action Used already
+        if not self._action: return
 
-    def move(self, move_amount):
+        # Passes the "attack" action, the troop attacking and the troop attacked
+        troop_actions_list.append(["attack", self, enemy, self._dmg])
+        self._action = False
+
+    def move(self, dir):
+        # Action Used already
+        if not self._action: return
+
         # Passes the "move" action, the troop that will be moved and how much by
-        troop_actions_list.append(["move", self.troop_id, move_amount])
+        troop_actions_list.append(["move", self, sign(dir)])
+        self._action = False
 
     def update_health(self, change):
         self.health += change

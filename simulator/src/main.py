@@ -45,14 +45,16 @@ def main():
     rightTroops.append(Base(id=-1, health=250, position=RIGHT_BASE_POS))  # Right base, Id = -1, health = 1000
 
     # Game Loop
-    while running:
+    for i in range(360000):
         # clock.tick(FPS)
         # display_clock(seconds_passed)
 
         # Check if base is still alive
         if len(leftTroops) == 0 or leftTroops[0].troop_id != 1:
+            print("Right Wins")
             break
         if len(rightTroops) == 0 or rightTroops[0].troop_id != -1:
+            print("Left Wins")
             break
 
         # for event in pygame.event.get():
@@ -81,31 +83,28 @@ def main():
             troop.update()
         for troop in rightTroops:
             troop.update()
+        
         # For every action in queue
         # sort to process attack first
         troop_actions_list.sort(key=lambda x: x[0])
-        for action in troop_actions_list:  # type: [str, int, int, int]
-            if action[0] == "attack":  # Process attack
-                if action[2].troop_id < 0:
-                    # attack right troops
-                    pos = getTroopById(action[2].troop_id)
-                    leftTroops[pos].update_health(-action[3])
-                    # action[2].update_health(-action[3])
-                else:
-                    # print(action[2].troop_id)
-                    pos = getTroopById(action[2].troop_id)
-                    rightTroops[pos].update_health(-action[3])
-            else:  # Process move
-                if action[1] < 0:
+
+        for action in troop_actions_list:
+            if action[0] == "attack":  # Process attack: [str, Troop, Troop]
+                # Skip the attack if not possible (ie out of range)
+                if distanceToEntity(action[1], action[2]) > action[1]._rng: continue
+
+                action[2].update_health(-action[1]._dmg)
+
+            else:  # Process move: [str, Troop, int]
+                if action[1].troop_id < 0:
                     rightTroops[getTroopById(action[1])].update_position(action[2])
                 else:
                     leftTroops[getTroopById(action[1])].update_position(action[2])
 
-        troop_actions_list.clear()
+            # Troop regains action ability
+            action[1]._action = True
 
-        # Debugging COde to show every troop and their position
-        # for i in leftTroops: print(i.troop_id, i.position)
-        # for i in rightTroops: print(i.troop_id, i.position)
+        troop_actions_list.clear()
 
         # Prepare Big JSON for all that has happened in the simulator
         troops = dict()
@@ -115,12 +114,19 @@ def main():
 
         # Delete all dead troops
         for ind, troop in enumerate(rightTroops):
-            if troop.health < 0:
+            if troop.health <= 0:
                 rightTroops.pop(ind)
         for ind, troop in enumerate(leftTroops):
-            if troop.health < 0:
+            if troop.health <= 0:
                 leftTroops.pop(ind)
+    else:
+        print("Draw")
 
+    # Debugging Code to show every troop and their position
+    for i in leftTroops: print(i.troop_id, i.position, i.health)
+    for i in rightTroops: print(i.troop_id, i.position, i.health)
+    print("================================================================")
+    
     json_object = json.dumps(details)
     with open("results.json", "w") as outfile:
         outfile.write(json_object)

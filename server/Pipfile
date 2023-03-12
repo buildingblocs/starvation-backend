@@ -5,8 +5,6 @@ name = "pypi"
 
 [packages]
 kubernetes = "*"
-arrow = "*"
-tqdm = "*"
 Flask = "*"
 Flask-Cors = "*"
 orjson = "*"

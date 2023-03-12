@@ -5,11 +5,9 @@ name = "pypi"
 
 [packages]
 kubernetes = "*"
-docker = "*"
-arrow = "*"
-tqdm = "*"
-pygame = "*"
 orjson = "*"
+Flask = "*"
+Flask-Cors = "*"
 
 [dev-packages]
 black = "*"
