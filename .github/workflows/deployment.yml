@@ -77,5 +77,14 @@ jobs:
 
     - name: 'Push Helm chart'
       run: |
-        helm push ./helm-1.0.0.tgz oci://asia-southeast1-docker.pkg.dev/starvation/helm/chart
+        helm push ./starvation-backend-chart-1.0.0.tgz oci://asia-southeast1-docker.pkg.dev/starvation/helm/
 
+  # helm-upgrade:
+  #   needs: [build-image, package-helm]
+  #   runs-on: ubuntu-latest
+
+  #   permissions:
+  #     contents: 'read'
+  #     id-token: 'write'
+
+  #   steps:
