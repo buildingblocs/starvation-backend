@@ -8,7 +8,6 @@ kubernetes = "*"
 docker = "*"
 arrow = "*"
 tqdm = "*"
-pygame = "*"
 orjson = "*"
 
 [dev-packages]

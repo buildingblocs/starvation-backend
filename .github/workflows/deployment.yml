@@ -34,6 +34,7 @@ jobs:
       uses: 'docker/build-push-action@v4'
       with:
         file: ./server/Dockerfile
+        context: ./server
         push: true
         tags: bbcs/server:latest
 
@@ -41,6 +42,7 @@ jobs:
       uses: 'docker/build-push-action@v4'
       with:
         file: ./simulator/Dockerfile
+        context: ./simulator
         push: true
         tags: bbcs/sandbox:latest
 
