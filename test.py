@@ -1,6 +1,6 @@
 import requests
 
-print(requests.post("http://127.0.0.1:35897/sendCode", json=dict(code="""
+print(requests.post("http://34.142.168.126:3000/sendCode", json=dict(code="""
 def distributeSkill(points):
     return [points//4, points//4, points//4, points//4]
 
