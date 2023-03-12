@@ -71,7 +71,11 @@ jobs:
         username: 'oauth2accesstoken'
         password: '${{ steps.auth.outputs.access_token }}'
 
+    - name: 'Package Helm chart'
+      run: |
+        tar -zcvf chart.tgz ./helm
+
     - name: 'Push Helm chart'
       run: |
-        helm push ./helm oci://asia-southeast1-docker.pkg.dev/starvation/helm/chart
+        helm push chart.tgz oci://asia-southeast1-docker.pkg.dev/starvation/helm/chart
 
