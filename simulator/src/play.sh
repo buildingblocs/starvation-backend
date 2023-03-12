@@ -1,11 +1,11 @@
 #!/bin/sh
 # play.sh
 
-printf "$1" > playerLeft.py
+printf '%s' "$1" > playerLeft.py
 
 if [ $# -eq 2 ]
 then
-    printf "$2" > playerRight.py
+    printf '%s' "$2" > playerRight.py
 fi
 
 python main.py >/dev/null 2>&1
