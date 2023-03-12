@@ -73,9 +73,9 @@ jobs:
 
     - name: 'Package Helm chart'
       run: |
-        tar -zcvf chart.tgz ./helm
+        helm package ./helm --version 1.0.0
 
     - name: 'Push Helm chart'
       run: |
-        helm push chart.tgz oci://asia-southeast1-docker.pkg.dev/starvation/helm/chart
+        helm push ./helm-1.0.0.tgz oci://asia-southeast1-docker.pkg.dev/starvation/helm/chart
 
