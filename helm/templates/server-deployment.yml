@@ -18,8 +18,8 @@ spec:
       serviceAccountName: bbcs-server
       containers:
         - name: server
-          image: bbcs/server
-          imagePullPolicy: Never
+          image: asia-southeast1-docker.pkg.dev/starvation/docker/server:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
           resources:
