@@ -36,7 +36,7 @@ jobs:
         file: ./server/Dockerfile
         context: ./server
         push: true
-        tags: asia-southeast1-docker.pkg.dev/starvation/bbcs/server:latest
+        tags: asia-southeast1-docker.pkg.dev/starvation/docker/server:latest
 
     - name: 'Build and push sandbox'
       uses: 'docker/build-push-action@v4'
@@ -44,5 +44,5 @@ jobs:
         file: ./simulator/Dockerfile
         context: ./simulator
         push: true
-        tags: asia-southeast1-docker.pkg.dev/starvation/bbcs/sandbox:latest
+        tags: asia-southeast1-docker.pkg.dev/starvation/docker/sandbox:latest
 
