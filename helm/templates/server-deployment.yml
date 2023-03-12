@@ -13,6 +13,7 @@ spec:
     metadata:
       labels:
         app: server-deployment
+        date: "{{ now | unixEpoch }}"
     spec:
       serviceAccountName: bbcs-server
       containers:

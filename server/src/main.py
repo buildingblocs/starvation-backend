@@ -14,14 +14,14 @@ def home(name):
 
 @app.route("/sendCodeHTML/<code>")
 def sendCodeHTML(code):
-    imports = "from troop import enemiesWithinRange, getFriendlyTroops, distanceToEntity\n\n"
-    return sandbox.sandbox(imports + code)[1]
+    imports = "from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity\n\n"
+    return str(sandbox.sandbox(imports + code)[1])
 
 
 @app.route("/sendCode", methods=["POST"])
 def sendCode():
     code = request.get_json()["code"]
-    imports = "from troop import enemiesWithinRange, getFriendlyTroops, distanceToEntity\n\n"
+    imports = "from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity\n\n"
     return jsonify(dict(zip(("status", "output"), sandbox.sandbox(imports + code))))
 
 

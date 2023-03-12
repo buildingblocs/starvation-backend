@@ -3,7 +3,6 @@ kind: Role
 metadata:
   name: server-sandbox-pods
   namespace: sandbox
-
 rules:
   - apiGroups: [""]
     resources: ["pods"]

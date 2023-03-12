@@ -66,7 +66,7 @@ def sandbox(solution_content):
     try:
         ret = orjson.loads(json_out.replace("'", '"'))
     except orjson.JSONDecodeError as e:
-        return (False, str(e))
+        return (False, f'{json_out}///{str(e)}')
 
     return (True, ret)
 
