@@ -53,11 +53,11 @@ def sandbox(solution_content):
     if pod.status.phase == "Running":
         print("Killing")
         client.delete_namespaced_pod(name=sandbox_name, namespace="sandbox")
-        return (False, 0)
+        return (False, "Time limit exceeded")
 
     if pod.status.phase == "Failed":
         print("Bad exit code")
-        return (False, 0)
+        return (False, "Internal sandbox error: bad exit code")
 
     logs = client.read_namespaced_pod_log(name=sandbox_name, namespace="sandbox", follow=True)
 
