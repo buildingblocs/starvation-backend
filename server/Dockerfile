@@ -11,6 +11,7 @@ FROM base AS python-deps
 
 # Install pipenv and compilation dependencies
 RUN pip install pipenv
+RUN apk add --no-cache --virtual runtime-deps libpq
 RUN apk add --no-cache --virtual build-deps g++ python3-dev musl-dev postgresql-dev libpq-dev
 
 # Install python dependencies in /.venv
