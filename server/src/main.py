@@ -5,6 +5,7 @@ from database import Database
 
 app = Flask(__name__)
 app.secret_key = "super_secret_key"
+db = Database()
 CORS(app)
 
 @app.route("/")
@@ -17,12 +18,12 @@ def sendCode():
     imports = "from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity\n\n"
     return jsonify(dict(zip(("status", "output"), sandbox.sandbox(imports + code))))
 
-@app.route("/testDB", methods=["GET"])
-def testDB():
-    db = Database()
-    res = db.retrieve_all_scores()
-    db.close_connection()
-    return res
+# @app.route("/testDB", methods=["GET"])
+# def testDB():
+#     db = Database()
+#     res = db.retrieve_all_scores()
+#     db.close_connection()
+#     return res
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000)
