@@ -8,7 +8,7 @@ kubernetes = "*"
 Flask = "*"
 Flask-Cors = "*"
 orjson = "*"
-psycopg = {extras = ["binary"], version = "*"}
+psycopg = {extras = ["c"], version = "*"}
 
 [dev-packages]
 
