@@ -19,7 +19,7 @@ def sendCode():
 
 @app.route("/testDB", methods=["GET"])
 def testDB():
-    db = Database("scores", "")
+    db = Database()
     res = db.retrieve_all_scores()
     db.close_connection()
     return res

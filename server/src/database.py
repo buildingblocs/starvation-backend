@@ -2,21 +2,22 @@ import psycopg
 import warnings
 
 class Database:
-    def __init__(self, table_name: str, db_file: str):
-        self.table_name = table_name
-        self.conn = psycopg.connect(db_file)
+    __slots__ = ["conn"]
+
+    def __init__(self):
+        self.conn = psycopg.connect("")
         # create table with ID (email address), full name, score
         with self.conn.transaction():
             with self.conn.cursor() as cur:
-                cur.execute("""CREATE TABLE IF NOT EXISTS %s (
+                cur.execute("""CREATE TABLE IF NOT EXISTS scores (
                                 id varchar(255) not null PRIMARY KEY, 
                                 fullname varchar(255), 
-                                score int not null)""", (self.table_name,)) 
+                                score int not null)""") 
 
     def _does_user_exist(self, id: str):
         with self.conn.transaction():
             with self.conn.cursor() as cur:
-                cur.execute("SELECT * FROM %s WHERE id=%s", (self.table_name, id))
+                cur.execute("SELECT * FROM scores WHERE id=%s", (id,))
                 return len(cur.fetchall()) == 1
 
     # adds user to the database
@@ -30,7 +31,7 @@ class Database:
         else:
             with self.conn.transaction():
                 with self.conn.cursor() as cur:
-                    cur.execute("INSERT INTO %s values(%s, %s, %s)", (self.table_name, id, fullname, score))
+                    cur.execute("INSERT INTO scores values(%s, %s, %s)", (id, fullname, score))
 
     # updates user's score
     def update_score(self, id: str, score: int):
@@ -41,14 +42,13 @@ class Database:
         else:
             with self.conn.transaction():
                 with self.conn.cursor() as cur:
-                    cur.execute("UPDATE %s SET score=%s WHERE id=%s", (self.table_name, score, id))
+                    cur.execute("UPDATE scores SET score=%s WHERE id=%s", (score, id))
 
     # retrieve full list of users and scores and returns in descending order of score
     def retrieve_all_scores(self):
         with self.conn.transaction():
             with self.conn.cursor() as cur:
-                cur.execute("SELECT * FROM %s", (self.table_name,))
-                data = cur.fetchall()
+                data = cur.execute("SELECT * FROM scores").fetchall()
         data = sorted(data, key=lambda x: x[-1], reverse=True)
         return data
     
@@ -56,6 +56,6 @@ class Database:
         self.conn.close() # note: all commands ran after closing will not work
         
 if __name__ == '__main__':
-    db = Database("scores", "") # ! please save the file properly somewhere
+    db = Database()
     print(db.retrieve_all_scores())
     db.close_connection()
