@@ -1,22 +1,22 @@
-import psycopg2
+import psycopg
 import warnings
 
 class Database:
     def __init__(self, table_name: str, db_file: str):
         self.table_name = table_name
-        self.conn = psycopg2.connect(db_file)
+        self.conn = psycopg.connect(db_file)
         # create table with ID (email address), full name, score
-        with self.conn:
+        with self.conn.transaction():
             with self.conn.cursor() as cur:
-                cur.execute(f"""CREATE TABLE IF NOT EXISTS {table_name} (
+                cur.execute("""CREATE TABLE IF NOT EXISTS %s (
                                 id varchar(255) not null PRIMARY KEY, 
                                 fullname varchar(255), 
-                                score int not null)""") 
+                                score int not null)""", (self.table_name,)) 
 
     def _does_user_exist(self, id: str):
-        with self.conn:
+        with self.conn.transaction():
             with self.conn.cursor() as cur:
-                cur.execute(f"SELECT * FROM {self.table_name} WHERE id='{id}'")
+                cur.execute("SELECT * FROM %s WHERE id=%s", (self.table_name, id))
                 return len(cur.fetchall()) == 1
 
     # adds user to the database
@@ -28,9 +28,9 @@ class Database:
         elif not isinstance(score, int):
             warnings.warn("Score must be an integer. No scores affected.")
         else:
-            with self.conn:
+            with self.conn.transaction():
                 with self.conn.cursor() as cur:
-                    cur.execute(f"INSERT INTO {self.table_name} values('{id}', '{fullname}', {score})")
+                    cur.execute("INSERT INTO %s values(%s, %s, %s)", (self.table_name, id, fullname, score))
 
     # updates user's score
     def update_score(self, id: str, score: int):
@@ -39,15 +39,15 @@ class Database:
         elif not isinstance(score, int):
             warnings.warn("Score must be an integer. No scores affected.")
         else:
-            with self.conn:
+            with self.conn.transaction():
                 with self.conn.cursor() as cur:
-                    cur.execute(f"UPDATE {self.table_name} SET score={score} WHERE id='{id}'")
+                    cur.execute("UPDATE %s SET score=%s WHERE id=%s", (self.table_name, score, id))
 
     # retrieve full list of users and scores and returns in descending order of score
     def retrieve_all_scores(self):
-        with self.conn:
+        with self.conn.transaction():
             with self.conn.cursor() as cur:
-                cur.execute(f"SELECT * FROM {self.table_name}")
+                cur.execute("SELECT * FROM %s", (self.table_name,))
                 data = cur.fetchall()
         data = sorted(data, key=lambda x: x[-1], reverse=True)
         return data
