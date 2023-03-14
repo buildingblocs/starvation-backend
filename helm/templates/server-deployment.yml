@@ -27,22 +27,22 @@ spec:
               memory: "256Mi"
               cpu: "500m" 
           env:
-            - name: DB_HOST
+            - name: PGHOST
               valueFrom:
                 secretKeyRef:
                   name: postgres-host
                   key: db_host
-            - name: DB_USER
+            - name: PGUSER
               valueFrom:
                 secretKeyRef:
                   name: postgres
                   key: username
-            - name: DB_PASS
+            - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres
                   key: password
-            - name: DB_NAME
+            - name: PGDATABASE
               valueFrom:
                 secretKeyRef:
                   name: postgres
