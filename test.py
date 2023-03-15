@@ -1,6 +1,6 @@
 import requests
 
-url = "http://127.0.0.1:41951"
+url = "http://34.142.168.126:3000"
 
 # do a bot tournament!
 for i in range(2, 8): # lvl1 is broken :(
