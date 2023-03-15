@@ -1,6 +1,7 @@
 import psycopg
 import warnings
 from psycopg.rows import dict_row
+import base64
 
 class Database:
     __slots__ = ["conn"]
@@ -31,6 +32,8 @@ class Database:
             with self.conn.cursor(row_factory=dict_row) as cur:
                 data = cur.execute("SELECT id, fullname, username, school, about, pfp, score, num_games FROM players").fetchall()
         data = sorted(data, key=lambda x: x["score"], reverse=True)
+        for row in data:
+            row["pfp"] = base64.b64encode(row["pfp"]).decode("utf-8")
         return data
     
     def retrieve_all_games(self):
