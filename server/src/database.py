@@ -29,7 +29,7 @@ class Database:
     def retrieve_all_players(self):
         with self.conn.transaction():
             with self.conn.cursor(row_factory=dict_row) as cur:
-                data = cur.execute("SELECT id, fullname, username, school, about, score, num_games FROM players").fetchall()
+                data = cur.execute("SELECT id, fullname, username, school, about, pfp, score, num_games FROM players").fetchall()
         data = sorted(data, key=lambda x: x["score"], reverse=True)
         return data
     

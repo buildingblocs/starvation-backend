@@ -25,6 +25,7 @@ class Database:
                                 username varchar(255),
                                 school varchar(100),
                                 about varchar(255),
+                                pfp blob,
                                 score int not null default 1000,
                                 code text,
                                 error_count int not null default 0,
