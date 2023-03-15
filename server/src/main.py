@@ -65,7 +65,11 @@ def addUser():
     data = request.get_json()
     id = data["id"]
     fullname = data["fullname"]
-    db.add_user(id, fullname)
+    username = data["username"]
+    school = data["school"]
+    about = data["about"]
+    photo = data["photo"].encode("utf-8")
+    db.add_user(id, fullname, username, school, about, photo)
     return "OK", 200
 
 if __name__ == "__main__":

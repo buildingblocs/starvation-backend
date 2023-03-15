@@ -65,14 +65,6 @@ class Database:
             with self.conn.transaction():
                 with self.conn.cursor() as cur:
                     cur.execute("UPDATE players SET score=score+%s WHERE id=%s", (delta, id))
-
-    # retrieve full list of users and players and returns in descending order of score
-    def retrieve_all_players(self):
-        with self.conn.transaction():
-            with self.conn.cursor() as cur:
-                data = cur.execute("SELECT id, fullname, score, num_games FROM players").fetchall()
-        data = sorted(data, key=lambda x: x["score"], reverse=True)
-        return data
     
     def record_error(self, pid: str):
         with self.conn.transaction():
@@ -131,8 +123,3 @@ class Database:
     
     def close_connection(self):
         self.conn.close() # note: all commands ran after closing will not work
-        
-if __name__ == '__main__':
-    db = Database()
-    print(db.retrieve_all_players())
-    db.close_connection()

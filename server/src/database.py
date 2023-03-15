@@ -15,7 +15,7 @@ class Database:
                 return len(cur.fetchall()) == 1
 
     # adds user to the database
-    def add_user(self, id: str, fullname: str):
+    def add_user(self, id: str, fullname: str, username: str, school: str, about: str, photo: bytes):
         if id is None or fullname is None or id == "" or fullname == "":
             warnings.warn("ID and full name cannot be None or empty. No users added.")
         elif self._does_user_exist(id):
@@ -23,7 +23,7 @@ class Database:
         else:
             with self.conn.transaction():
                 with self.conn.cursor() as cur:
-                    cur.execute("INSERT INTO players(id, fullname) values(%s, %s)", (id, fullname))
+                    cur.execute("INSERT INTO players(id, fullname, username, school, about) values(%s, %s, %s, %s, %s)", (id, fullname, username, school, about))
 
     # retrieve full list of users and players and returns in descending order of score
     def retrieve_all_players(self):
