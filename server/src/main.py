@@ -54,6 +54,11 @@ def getGames():
     res = db.retrieve_all_games()
     return jsonify(res)
 
+@app.route("/getGame/<int:id>", methods=["GET"])
+def getGameDetails(id):
+    res = db.retrieve_game(id)
+    return jsonify(res)
+
 @app.route("/addUser", methods=["POST"])
 def addUser():
     data = request.get_json()
