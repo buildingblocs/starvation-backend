@@ -2,12 +2,12 @@ import requests
 
 url = "http://127.0.0.1:41951"
 
-# # do a bot tournament!
-# for i in range(2, 8): # lvl1 is broken :(
-#     requests.post(f"{url}/addUser", json=dict(id=f"level{i}", fullname=f"level{i}"))
-#     with open(f"simulator/src/levels/level{i}.py", "r") as f:
-#         code = f.read()
-#     requests.post(f"{url}/sendCode", json=dict(id=f"level{i}", code=code))
+# do a bot tournament!
+for i in range(2, 8): # lvl1 is broken :(
+    requests.post(f"{url}/addUser", json=dict(id=f"level{i}", fullname=f"level{i}"))
+    with open(f"simulator/src/levels/level{i}.py", "r") as f:
+        code = f.read()
+    requests.post(f"{url}/sendCode", json=dict(id=f"level{i}", code=code))
 
 
 # print(requests.post("http://127.0.0.1:45427/sendCodeAI", json=dict(code="""
