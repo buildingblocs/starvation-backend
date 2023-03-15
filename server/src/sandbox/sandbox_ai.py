@@ -18,13 +18,13 @@ fp = Path(__file__).parent.absolute()
 client = kubernetes.client.CoreV1Api()
 
 
-def runner(solution_content: str) -> Tuple[bool, Mapping[str, Any]]:
+def runner(solution_content: str, level: int) -> Tuple[bool, Mapping[str, Any]]:
     sandbox_name = f"sandbox-{uuid.uuid4()}"
 
     with open(fp / "sandbox-deployment.yml") as f:
         dep = yaml.safe_load(f)
         dep["metadata"]["name"] = sandbox_name
-        dep["spec"]["containers"][0]["args"] = [solution_content]
+        dep["spec"]["containers"][0]["args"] = [solution_content, "", level]
         pod = client.create_namespaced_pod(body=dep, namespace="sandbox")
 
     # wait for pod to be ready
