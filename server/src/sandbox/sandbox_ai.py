@@ -24,7 +24,7 @@ def runner(solution_content: str, level: int) -> Tuple[bool, Mapping[str, Any]]:
     with open(fp / "sandbox-deployment.yml") as f:
         dep = yaml.safe_load(f)
         dep["metadata"]["name"] = sandbox_name
-        dep["spec"]["containers"][0]["args"] = [solution_content, "", level]
+        dep["spec"]["containers"][0]["args"] = [solution_content, "", str(level)]
         pod = client.create_namespaced_pod(body=dep, namespace="sandbox")
 
     # wait for pod to be ready
