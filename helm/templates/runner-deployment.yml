@@ -1,36 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: server-deployment
+  name: runner-deployment
   labels:
-    app: server-deployment
-  namespace: server
+    app: runner-deployment
+  namespace: runner
 spec:
   selector:
     matchLabels:
-      app: server-deployment
+      app: runner-deployment
   template:
     metadata:
       labels:
-        app: server-deployment
+        app: runner-deployment
         date: "{{ now | unixEpoch }}"
     spec:
-      serviceAccountName: starvation-server
+      serviceAccountName: starvation-runner
       containers:
-        - name: server
+        - name: runner
           {{- if .Values.local }}
-          image: bbcs/server
+          image: bbcs/runner
           imagePullPolicy: Never
           {{- else }}
-          image: asia-southeast1-docker.pkg.dev/starvation/docker/server:latest
+          image: asia-southeast1-docker.pkg.dev/starvation/docker/runner:latest
           imagePullPolicy: Always
           {{- end }}
-          ports:
-            - containerPort: 3000
           resources:
             limits:
               memory: "256Mi"
-              cpu: "500m" 
+              cpu: "100m"
           env:
             - name: PGHOST
               valueFrom:

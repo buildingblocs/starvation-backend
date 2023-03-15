@@ -4,6 +4,7 @@ import os  # I didn't even use this lol
 
 # import pygame  # not really necessary, but might be easier to use. Currently pygame is a placeholder to show that the loop works.
 import json
+import time
 
 # Gotta split up gameAPI, circular import moments
 from troop import *
@@ -20,7 +21,7 @@ from user import *
 
 # pygame.display.set_caption("CodeCombat placeholder screen")
 
-FPS = 60  # Limits game to run at 60FPS, game will run at <= 60 FPS max
+# FPS = 60  # Limits game to run at 60FPS, game will run at <= 60 FPS max
 
 
 # def display_clock(seconds_passed):  # placeholder for screen
@@ -35,6 +36,7 @@ def main():
     details = []
     # clock = pygame.time.Clock()
     # pygame.font.init()
+    result = "draw"
     running = True
     time_passed = 0
     seconds_passed = 0
@@ -44,16 +46,20 @@ def main():
     leftTroops.append(Base(id=1, health=250, position=LEFT_BASE_POS))  # Left base, Id = 1, health = 1000
     rightTroops.append(Base(id=-1, health=250, position=RIGHT_BASE_POS))  # Right base, Id = -1, health = 1000
 
+    start = time.time()
+
     # Game Loop
-    for i in range(360000):
+    for i in range(18000): # 5 minutes at 60fps
         # clock.tick(FPS)
         # display_clock(seconds_passed)
 
         # Check if base is still alive
         if len(leftTroops) == 0 or leftTroops[0].troop_id != 1:
+            result = "right"
             print("Right Wins")
             break
         if len(rightTroops) == 0 or rightTroops[0].troop_id != -1:
+            result = "left"
             print("Left Wins")
             break
 
@@ -66,8 +72,8 @@ def main():
         #         pygame.quit()
 
         # Skip game if paused (why is this here!?)
-        if pause:
-            continue
+        # if pause:
+        #     continue
 
         time_passed += 1
 
@@ -109,7 +115,7 @@ def main():
         # Prepare Big JSON for all that has happened in the simulator
         troops = dict()
         for troop in rightTroops + leftTroops:
-            troops[str(troop.troop_id)] = {"Health": troop.health, "Position": troop.position}
+            troops[str(troop.troop_id)] = {"h": troop.health, "p": troop.position}
         details.append(troops)
 
         # Delete all dead troops
@@ -127,7 +133,7 @@ def main():
     for i in rightTroops: print(i.troop_id, i.position, i.health)
     print("================================================================")
     
-    json_object = json.dumps(details)
+    json_object = json.dumps({"details": details, "result": result, "runtime": time.time() - start}, separators=(',', ':'))
     with open("results.json", "w") as outfile:
         outfile.write(json_object)
 

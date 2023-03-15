@@ -4,11 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-Flask = "*"
-Flask-Cors = "*"
-psycopg = {extras = ["c"], version = "*"}
 kubernetes = "*"
 orjson = "*"
+psycopg = {extras = ["c"], version = "*"}
 
 [dev-packages]
 

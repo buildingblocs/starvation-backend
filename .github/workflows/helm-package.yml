@@ -1,0 +1,41 @@
+name: Package Helm chart
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "helm/**"
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        token_format: 'access_token'
+        workload_identity_provider: "projects/596255395612/locations/global/workloadIdentityPools/gh-actions-pool/providers/gh-actions-provider"
+        service_account: "github-actions@starvation.iam.gserviceaccount.com"
+
+    - uses: 'docker/login-action@v1'
+      name: 'Login to Google Artifact Registry'
+      with:
+        registry: 'asia-southeast1-docker.pkg.dev'
+        username: 'oauth2accesstoken'
+        password: '${{ steps.auth.outputs.access_token }}'
+
+    - name: 'Package Helm chart'
+      run: |
+        helm package ./helm --version 1.0.0
+
+    - name: 'Push Helm chart'
+      run: |
+        helm push ./starvation-backend-chart-1.0.0.tgz oci://asia-southeast1-docker.pkg.dev/starvation/helm/

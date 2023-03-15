@@ -1,11 +1,13 @@
-name: Deploy to Google Cloud
+name: Build Runner
 
 on:
   workflow_dispatch:
   push:
+    paths:
+      - "runner/**"
 
 jobs:
-  build-image:
+  build:
     runs-on: ubuntu-latest
 
     permissions:
@@ -30,21 +32,13 @@ jobs:
         username: 'oauth2accesstoken'
         password: '${{ steps.auth.outputs.access_token }}'
 
-    - name: 'Build and push server'
+    - name: 'Build and push runner'
       uses: 'docker/build-push-action@v4'
       with:
-        file: ./server/Dockerfile
-        context: ./server
+        file: ./runner/Dockerfile
+        context: ./runner
         push: true
-        tags: asia-southeast1-docker.pkg.dev/starvation/docker/server:latest
-
-    - name: 'Build and push sandbox'
-      uses: 'docker/build-push-action@v4'
-      with:
-        file: ./simulator/Dockerfile
-        context: ./simulator
-        push: true
-        tags: asia-southeast1-docker.pkg.dev/starvation/docker/sandbox:latest
+        tags: asia-southeast1-docker.pkg.dev/starvation/docker/runner:latest
 
   package-helm:
     runs-on: ubuntu-latest

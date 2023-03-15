@@ -1,4 +1,5 @@
 import time
+from typing import Mapping, Tuple, Union, Any
 import uuid
 from pathlib import Path
 
@@ -17,7 +18,7 @@ fp = Path(__file__).parent.absolute()
 client = kubernetes.client.CoreV1Api()
 
 
-def sandbox(solution_content):
+def runner(solution_content: str) -> Tuple[bool, Mapping[str, Any]]:
     sandbox_name = f"sandbox-{uuid.uuid4()}"
 
     with open(fp / "sandbox-deployment.yml") as f:
@@ -29,35 +30,38 @@ def sandbox(solution_content):
     # wait for pod to be ready
     while True:
         pod = client.read_namespaced_pod(name=sandbox_name, namespace="sandbox")
-        if pod.status.phase != "Pending":
+        if pod.status.phase != "Pending": # type: ignore
             break
         time.sleep(0.1)
 
     print("Starting judging...")
+    start = time.time()
 
     # 1s total wait time
     # for i in range(10):
     # any amount of wait time lmao
     # bro you want someone to just be able to sleep for 70 years???
-    # 10s TL
-    for i in range(100):
+    # 60s TL
+    for i in range(600):
         time.sleep(0.1)
 
         pod = client.read_namespaced_pod(name=sandbox_name, namespace="sandbox")
 
-        if pod.status.phase != "Running":
+        if pod.status.phase != "Running": # type: ignore
             break
 
     print("Ending judging...")
+    runtime = time.time() - start
 
-    if pod.status.phase == "Running":
+    if pod.status.phase == "Running": # type: ignore
         print("Killing")
         client.delete_namespaced_pod(name=sandbox_name, namespace="sandbox")
-        return (False, "Time limit exceeded")
+        return (False, {"error": "Time limit exceeded"})
 
-    if pod.status.phase == "Failed":
+    if pod.status.phase == "Failed": # type: ignore
         print("Bad exit code")
-        return (False, "Internal sandbox error: bad exit code")
+        client.delete_namespaced_pod(name=sandbox_name, namespace="sandbox")
+        return (False, {"error": "Internal sandbox error: bad exit code"})
 
     logs = client.read_namespaced_pod_log(name=sandbox_name, namespace="sandbox", follow=True)
 
@@ -66,8 +70,10 @@ def sandbox(solution_content):
     try:
         ret = orjson.loads(json_out.replace("'", '"'))
     except orjson.JSONDecodeError as e:
-        return (False, f'{json_out}///{str(e)}')
+        client.delete_namespaced_pod(name=sandbox_name, namespace="sandbox")
+        return (False, {"error": f'{json_out}///{str(e)}'})
 
+    client.delete_namespaced_pod(name=sandbox_name, namespace="sandbox")
     return (True, ret)
 
 

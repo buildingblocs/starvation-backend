@@ -8,6 +8,9 @@ docker build -t bbcs/server ./server
 # simulator
 docker build -t bbcs/sandbox ./simulator
 
+# runner
+docker build -t bbcs/runner ./runner
+
 # use helm to setup k8s
 helm upgrade --install starvation-backend ./helm
 
