@@ -6,7 +6,6 @@ def distributeSkill(points):
     return [0, 0, points, 0]
 
 def decideAction(self):
-    global cnt
     cnt = 0
     enemies = enemiesWithinRange(self)
 
@@ -17,5 +16,5 @@ def decideAction(self):
         else:
             self.update_health(5)
         cnt += 1
-    else: 
+    else:
         self.move(1)
