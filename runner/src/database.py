@@ -20,8 +20,11 @@ class Database:
         with self.conn.transaction():
             with self.conn.cursor() as cur:
                 cur.execute("""CREATE TABLE IF NOT EXISTS players (
-                                id varchar(255) not null PRIMARY KEY, 
-                                fullname varchar(255), 
+                                id varchar(255) not null PRIMARY KEY,
+                                fullname varchar(255),
+                                username varchar(255),
+                                school varchar(100),
+                                about varchar(255),
                                 score int not null default 1000,
                                 code text,
                                 error_count int not null default 0,
@@ -39,7 +42,11 @@ class Database:
                                 d2 INT,
                                 replay jsonb,
                                 CONSTRAINT details_if_finished CHECK ( NOT (finished AND (result IS NULL OR d1 IS NULL OR d2 IS NULL OR replay IS NULL ))) 
-                                )""")
+                            )""")
+                
+                # cur.execute("""CREATE TABLE IF NOT EXISTS gcredentials (
+
+                #             )""")
 
 
     def _does_user_exist(self, id: str):
