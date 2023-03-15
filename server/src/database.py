@@ -23,7 +23,7 @@ class Database:
         else:
             with self.conn.transaction():
                 with self.conn.cursor() as cur:
-                    cur.execute("INSERT INTO players(id, fullname, username, school, about) values(%s, %s, %s, %s, %s)", (id, fullname, username, school, about))
+                    cur.execute("INSERT INTO players(id, fullname, username, school, about, pfp) values(%s, %s, %s, %s, %s, %s)", (id, fullname, username, school, about, photo))
 
     # retrieve full list of users and players and returns in descending order of score
     def retrieve_all_players(self):
