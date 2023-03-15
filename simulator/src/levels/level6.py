@@ -6,7 +6,6 @@ def distributeSkill(points):
     return [0, 0, points, 0]
 
 def decideAction(self):
-    global cnt
     enemies = enemiesWithinRange(self)
 
     # Attack any enemy within range

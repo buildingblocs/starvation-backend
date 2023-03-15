@@ -3,7 +3,7 @@ import requests
 url = "http://34.142.168.126:3000"
 
 # do a bot tournament!
-for i in range(2, 8): # lvl1 is broken :(
+for i in range(1, 9): # lvl1 is broken :(
     requests.post(f"{url}/addUser", json=dict(id=f"level{i}", fullname=f"level{i}"))
     with open(f"simulator/src/levels/level{i}.py", "r") as f:
         code = f.read()

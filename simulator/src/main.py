@@ -126,7 +126,17 @@ def main():
             if troop.health <= 0:
                 leftTroops.pop(ind)
     else:
-        print("Draw")
+        # sudden death
+        left_health = leftTroops[0].health
+        right_health = rightTroops[0].health
+        if left_health > right_health:
+            result = "left"
+            print("Left Wins")
+        elif right_health > left_health:
+            result = "right"
+            print("Right Wins")
+        else:
+            print("Draw")
 
     # Debugging Code to show every troop and their position
     for i in leftTroops: print(i.troop_id, i.position, i.health)

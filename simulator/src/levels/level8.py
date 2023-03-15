@@ -6,7 +6,7 @@ def distributeSkill(points):
     return [0, 0, points, 0]
 
 def decideAction(self):
-    global cnt
+    cnt = 0
     enemies = enemiesWithinRange(self)
 
     # Attack any enemy within range
@@ -15,5 +15,6 @@ def decideAction(self):
             self.attack(enemies[-1]) # Now targets troops first
         else:
             self.update_health(5)
-    else: self.move(1)
-    
+        cnt += 1
+    else:
+        self.move(1)
