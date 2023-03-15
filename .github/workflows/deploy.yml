@@ -1,0 +1,222 @@
+name: Deploy to Google Cloud
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "server/**"
+      - "runner/**"
+      - "simulator/**"
+      - "helm/**"
+
+jobs:
+  build-runner:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          changes:
+            - 'runner/**'
+
+    - id: 'auth'
+      if: steps.filter.outputs.changes == 'true'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        token_format: 'access_token'
+        workload_identity_provider: "projects/596255395612/locations/global/workloadIdentityPools/gh-actions-pool/providers/gh-actions-provider"
+        service_account: "github-actions@starvation.iam.gserviceaccount.com"
+
+    - uses: 'docker/login-action@v1'
+      if: steps.filter.outputs.changes == 'true'
+      name: 'Login to Google Artifact Registry'
+      with:
+        registry: 'asia-southeast1-docker.pkg.dev'
+        username: 'oauth2accesstoken'
+        password: '${{ steps.auth.outputs.access_token }}'
+
+    - name: 'Build and push runner'
+      if: steps.filter.outputs.changes == 'true'
+      uses: 'docker/build-push-action@v4'
+      with:
+        file: ./runner/Dockerfile
+        context: ./runner
+        push: true
+        tags: asia-southeast1-docker.pkg.dev/starvation/docker/runner:latest
+
+  build-sandbox:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          changes:
+            - 'simulator/**'
+
+    - id: 'auth'
+      if: steps.filter.outputs.changes == 'true'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        token_format: 'access_token'
+        workload_identity_provider: "projects/596255395612/locations/global/workloadIdentityPools/gh-actions-pool/providers/gh-actions-provider"
+        service_account: "github-actions@starvation.iam.gserviceaccount.com"
+
+    - uses: 'docker/login-action@v1'
+      if: steps.filter.outputs.changes == 'true'
+      name: 'Login to Google Artifact Registry'
+      with:
+        registry: 'asia-southeast1-docker.pkg.dev'
+        username: 'oauth2accesstoken'
+        password: '${{ steps.auth.outputs.access_token }}'
+
+    - name: 'Build and push sandbox'
+      if: steps.filter.outputs.changes == 'true'
+      uses: 'docker/build-push-action@v4'
+      with:
+        file: ./simulator/Dockerfile
+        context: ./simulator
+        push: true
+        tags: asia-southeast1-docker.pkg.dev/starvation/docker/sandbox:latest
+
+  build-server:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          changes:
+            - 'server/**'
+
+    - id: 'auth'
+      if: steps.filter.outputs.changes == 'true'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        token_format: 'access_token'
+        workload_identity_provider: "projects/596255395612/locations/global/workloadIdentityPools/gh-actions-pool/providers/gh-actions-provider"
+        service_account: "github-actions@starvation.iam.gserviceaccount.com"
+
+    - uses: 'docker/login-action@v1'
+      if: steps.filter.outputs.changes == 'true'
+      name: 'Login to Google Artifact Registry'
+      with:
+        registry: 'asia-southeast1-docker.pkg.dev'
+        username: 'oauth2accesstoken'
+        password: '${{ steps.auth.outputs.access_token }}'
+
+    - name: 'Build and push server'
+      if: steps.filter.outputs.changes == 'true'
+      uses: 'docker/build-push-action@v4'
+      with:
+        file: ./server/Dockerfile
+        context: ./server
+        push: true
+        tags: asia-southeast1-docker.pkg.dev/starvation/docker/server:latest
+
+  helm-package:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          changes:
+            - 'helm/**'
+
+    - id: 'auth'
+      if: steps.filter.outputs.changes == 'true'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        token_format: 'access_token'
+        workload_identity_provider: "projects/596255395612/locations/global/workloadIdentityPools/gh-actions-pool/providers/gh-actions-provider"
+        service_account: "github-actions@starvation.iam.gserviceaccount.com"
+
+    - uses: 'docker/login-action@v1'
+      if: steps.filter.outputs.changes == 'true'
+      name: 'Login to Google Artifact Registry'
+      with:
+        registry: 'asia-southeast1-docker.pkg.dev'
+        username: 'oauth2accesstoken'
+        password: '${{ steps.auth.outputs.access_token }}'
+
+    - name: 'Package Helm chart'
+      if: steps.filter.outputs.changes == 'true'
+      run: |
+        helm package ./helm --version 1.0.0
+
+    - name: 'Push Helm chart'
+      if: steps.filter.outputs.changes == 'true'
+      run: |
+        helm push ./starvation-backend-chart-1.0.0.tgz oci://asia-southeast1-docker.pkg.dev/starvation/helm/
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    needs: [build-runner, build-sandbox, build-server, helm-package]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        token_format: 'access_token'
+        workload_identity_provider: "projects/596255395612/locations/global/workloadIdentityPools/gh-actions-pool/providers/gh-actions-provider"
+        service_account: "github-actions@starvation.iam.gserviceaccount.com"
+
+    - uses: 'docker/login-action@v1'
+      name: 'Login to Google Artifact Registry'
+      with:
+        registry: 'asia-southeast1-docker.pkg.dev'
+        username: 'oauth2accesstoken'
+        password: '${{ steps.auth.outputs.access_token }}'
+
+    - name: 'Get GKE credentials'
+      uses: 'google-github-actions/get-gke-credentials@v1'
+      with:
+        cluster_name: 'starvation'
+        location: 'asia-southeast1'
+
+    - name: 'Upgrade Helm chart'
+      run: |
+        helm upgrade --install starvation-backend oci://asia-southeast1-docker.pkg.dev/starvation/helm/starvation-backend-chart
+
