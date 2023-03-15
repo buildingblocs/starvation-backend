@@ -68,7 +68,11 @@ def addUser():
     username = data["username"]
     school = data["school"]
     about = data["about"]
-    photo = data["photo"].encode("utf-8")
+    if "photo" in data:
+        photo = data["photo"].encode("utf-8")
+    else:
+        with open("default.png", "rb") as f:
+            photo = f.read()
     db.add_user(id, fullname, username, school, about, photo)
     return "OK", 200
 
