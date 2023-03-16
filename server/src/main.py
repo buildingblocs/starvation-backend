@@ -115,7 +115,7 @@ def callback():
     token_url, headers, body = client.prepare_token_request(
         token_endpoint,
         authorization_response=request.url.replace("http://", "https://", 1),
-        redirect_url=request.base_url.replace("http://", "https://", 1) + "/callback",
+        redirect_url=request.base_url.replace("http://", "https://", 1),
         code=code
     )
     token_response = requests.post(
