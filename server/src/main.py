@@ -18,7 +18,7 @@ import arrow
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
 db = Database()
-CORS(app, origins=["http://localhost:8080", "https://starvation.buildingblocs.sg"], supports_credentials=True)
+CORS(app)
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
