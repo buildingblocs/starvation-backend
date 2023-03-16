@@ -1,8 +1,9 @@
-from flask import Flask, redirect, request, jsonify, session
+from datetime import datetime, timedelta, timezone
+from flask import Flask, make_response, redirect, request, jsonify, session
 from flask.json.provider import JSONProvider
 from flask_cors import CORS
-from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from oauthlib.oauth2 import WebApplicationClient
+from flask_jwt_extended import JWTManager, create_access_token, current_user, get_jwt, get_jwt_identity, jwt_required, set_access_cookies, unset_jwt_cookies
 import requests
 from database import Database
 from sandbox.sandbox_ai import runner
@@ -22,14 +23,25 @@ GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 GOOGLE_PROVIDER_CONFIG = requests.get(GOOGLE_DISCOVERY_URL).json()
 
-login_manager = LoginManager()
-login_manager.init_app(app)
+app.config["JWT_SECRET_KEY"] = app.secret_key
+app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+app.config["JWT_COOKIE_SECURE"] = True
+
+jwt = JWTManager(app)
 
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.get(user_id)
+@jwt.user_identity_loader
+def user_identity_lookup(user: User):
+    return user.id
+
+@jwt.user_lookup_loader
+def user_lookup_callback(_jwt_header, jwt_data):
+    identity = jwt_data["sub"]
+    player = db.retrieve_player(identity)
+    if not player:
+        return None
+    return User(player["id"])
 
 class ORJSONProvider(JSONProvider):
     def __init__(self, *args, **kwargs):
@@ -103,15 +115,17 @@ def getChallenge():
     return jsonify(dict(code=db.get_challenge_code(id, level)))
 
 @app.route("/testLogin")
+@jwt_required(optional=True)
 def testLogin():
-    if current_user.is_authenticated: # type: ignore
-        result = db.retrieve_player(current_user.get_id()) # type: ignore
+    if current_user: # type: ignore
+        result = db.retrieve_player(current_user.id) # type: ignore
         if result is None:
-            logout_user()
-            return jsonify({"status": False})
+            response = jsonify({"status": False})
+            unset_jwt_cookies(response)
+            return response
         response = {"user": result, "status": True}
         return jsonify(response)
-    return jsonify({"status": current_user.is_authenticated}) # type: ignore
+    return jsonify({"status": False}) # type: ignore
 
 @app.route("/login")
 def login():
@@ -163,26 +177,40 @@ def callback():
         id = userinfo_response.json()["email"]
     else:
         return "User email not available or not verified by Google.", 400
-    
-    user = User(id)
 
     next_ = session.pop("next", "/")
 
-    if not User.get(id):
+    if not db.does_user_exist(id):
         print(session["create"], flush=True)
         if session.pop("create", None) != "true":
             return redirect(next_)
         with open("src/default.png", "rb") as f:
             pfp = f.read()
-        User.create(id, "", "", "", "", pfp)
+        db.add_user(id, "", "", "", "", pfp)
 
-    login_user(user, remember=True)
+    response = redirect(next_)
+    access_token = create_access_token(identity=id)
+    set_access_cookies(response, access_token) # type: ignore
 
     # vulnerable to open redirect but welp
-    return redirect(next_)
+    return response
+
+@app.after_request
+def refresh_expiring_jwts(response):
+    try:
+        exp_timestamp = get_jwt()["exp"]
+        now = datetime.now(timezone.utc)
+        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+        if target_timestamp > exp_timestamp:
+            access_token = create_access_token(identity=get_jwt_identity())
+            set_access_cookies(response, access_token)
+        return response
+    except (RuntimeError, KeyError):
+        # Case where there is not a valid JWT. Just return the original response
+        return response
 
 @app.route("/updateDetails", methods=["POST"])
-@login_required
+@jwt_required()
 def updateDetails():
     try:
         data = request.get_json()
@@ -212,7 +240,7 @@ def existsUsername():
     return jsonify({"result": db.does_username_exist(username)})
 
 @app.route("/deleteUser", methods=["POST"])
-@login_required
+@jwt_required()
 def deleteUser():
     data = request.get_json()
     id = data["id"]
@@ -220,10 +248,11 @@ def deleteUser():
     return "OK", 200
 
 @app.route("/logout")
-@login_required
+@jwt_required()
 def logout():
-    logout_user()
-    return "OK", 200
+    response = make_response("OK", 200)
+    unset_jwt_cookies(response)
+    return response
 
 # @app.route("/addUser", methods=["POST"])
 # def addUser():

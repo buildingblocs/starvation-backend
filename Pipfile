@@ -9,7 +9,7 @@ orjson = "*"
 Flask = "*"
 Flask-Cors = "*"
 psycopg = {extras = ["binary"], version = "*"}
-flask-login = "*"
+flask-jwt-extended = "*"
 oauthlib = "*"
 requests = "*"
 
