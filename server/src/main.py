@@ -176,7 +176,7 @@ def callback():
             pfp = f.read()
         User.create(id, "", "", "", "", pfp)
 
-    login_user(user)
+    login_user(user, remember=True)
 
     # vulnerable to open redirect but welp
     return redirect(next_)
