@@ -169,7 +169,7 @@ def callback():
     next_ = session.pop("next", "/")
 
     if not User.get(id):
-        if session["create"] != "true":
+        if session.pop("create", None) != "true":
             return redirect(next_)
         with open("src/default.png", "rb") as f:
             pfp = f.read()
