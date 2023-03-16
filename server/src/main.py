@@ -189,7 +189,7 @@ def callback():
         db.add_user(id, "", "", "", "", pfp)
 
     response = redirect(next_)
-    access_token = create_access_token(identity=id)
+    access_token = create_access_token(identity=User(id))
     set_access_cookies(response, access_token) # type: ignore
 
     # vulnerable to open redirect but welp
