@@ -21,7 +21,7 @@ class Database:
         else:
             with self.conn.transaction():
                 with self.conn.cursor() as cur:
-                    cur.execute("UPDATE players SET fullname=%s, username=%s, school=%s, about=%s, pfp=%s WHERE id=%s", (id, fullname, username, school, about, pfp))
+                    cur.execute("UPDATE players SET fullname=%s, username=%s, school=%s, about=%s, pfp=%s WHERE id=%s", (fullname, username, school, about, pfp, id))
 
     # adds user to the database
     def add_user(self, id: str, fullname: str, username: str, school: str, about: str, photo: bytes):
