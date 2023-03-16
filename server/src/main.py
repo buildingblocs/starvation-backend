@@ -4,7 +4,7 @@ from flask import Flask, make_response, redirect, request, jsonify, session
 from flask.json.provider import JSONProvider
 from flask_cors import CORS
 from oauthlib.oauth2 import WebApplicationClient
-from flask_jwt_extended import JWTManager, create_access_token, current_user, get_jwt, get_jwt_identity, jwt_required, set_access_cookies, unset_jwt_cookies
+from flask_jwt_extended import JWTManager, create_access_token, current_user, get_jwt, get_jwt_identity, jwt_required
 import requests
 from database import Database
 from sandbox.sandbox_ai import runner
@@ -25,9 +25,9 @@ GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configura
 GOOGLE_PROVIDER_CONFIG = requests.get(GOOGLE_DISCOVERY_URL).json()
 
 app.config["JWT_SECRET_KEY"] = app.secret_key
-app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
-app.config["JWT_COOKIE_SECURE"] = True
+app.config["JWT_TOKEN_LOCATION"] = ["header"]
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 
 resolver_table = {}
 
@@ -129,7 +129,6 @@ def testLogin():
         result = db.retrieve_player(current_user.id) # type: ignore
         if result is None:
             response = jsonify({"status": False})
-            unset_jwt_cookies(response)
             return response
         response = {"user": result, "status": True}
         return jsonify(response)
@@ -209,24 +208,15 @@ def resolver():
         user = resolver_table[code]
         del resolver_table[code]
         access_token = create_access_token(identity=user)
-        response = jsonify({"status": True})
-        set_access_cookies(response, access_token)
+        response = jsonify({"status": True, "access_token": access_token})
         return response
     return jsonify({"status": False})
 
-@app.after_request
-def refresh_expiring_jwts(response):
-    try:
-        exp_timestamp = get_jwt()["exp"]
-        now = datetime.now(timezone.utc)
-        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
-        if target_timestamp > exp_timestamp:
-            access_token = create_access_token(identity=User(get_jwt_identity()))
-            set_access_cookies(response, access_token)
-        return response
-    except (RuntimeError, KeyError):
-        # Case where there is not a valid JWT. Just return the original response
-        return response
+@app.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def refresh_expiring_jwts():
+    access_token = create_access_token(identity=current_user)
+    return jsonify(access_token=access_token)
 
 @app.route("/updateDetails", methods=["POST"])
 @jwt_required()
@@ -265,13 +255,6 @@ def deleteUser():
     id = data["id"]
     db.delete_user(id)
     return "OK", 200
-
-@app.route("/logout")
-@jwt_required()
-def logout():
-    response = make_response("OK", 200)
-    unset_jwt_cookies(response)
-    return response
 
 # @app.route("/addUser", methods=["POST"])
 # def addUser():
