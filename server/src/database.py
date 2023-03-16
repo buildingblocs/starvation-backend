@@ -31,7 +31,7 @@ class Database:
 
     # adds user to the database
     def add_user(self, id: str, fullname: str, username: str, school: str, about: str, photo: bytes):
-        if id is None or fullname is None or id == "" or fullname == "":
+        if id is None or fullname is None:
             warnings.warn("ID and full name cannot be None or empty. No users added.")
         elif self.does_user_exist(id):
             warnings.warn("Another user with the same ID already exists in the database. No users added.")
@@ -96,7 +96,7 @@ class Database:
                 cur.execute("SELECT code FROM levels WHERE id=%s and level=%s", (id, level))
                 result = cur.fetchall()
         
-        if len(result): return result[0]
+        if len(result): return result[0]["code"]
         else: return ""
     
     def close_connection(self):
