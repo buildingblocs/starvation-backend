@@ -87,7 +87,8 @@ def updateDetails():
 
 @app.route("/existsUsername", methods=["GET"]) # type: ignore
 def exists_username():
-    username = request.args.get("username", "")
+    username = request.args.get("username")
+    if username is None: return False
     return db.does_username_exist(username)
 
 @app.route("/addUser", methods=["POST"])
