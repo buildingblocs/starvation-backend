@@ -60,6 +60,9 @@ class Database:
         with self.conn.transaction():
             with self.conn.cursor() as cur:
                 data = cur.execute("SELECT id, fullname, username, school, about, pfp, score, num_games FROM players WHERE id=%s", (id,)).fetchone()
+        if data is None:
+            return data
+        data["pfp"] = base64.b64encode(data["pfp"]).decode("utf-8")
         return data
     
     def retrieve_game(self, gid: int):

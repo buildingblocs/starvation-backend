@@ -91,6 +91,8 @@ def getPlayers():
 @app.route("/getPlayer/<string:id>", methods=["GET"])
 def getPlayer(id: str):
     res = db.retrieve_player(id)
+    if res is None:
+        return "", 404
     return jsonify(res)
 
 @app.route("/getGames", methods=["GET"])
@@ -101,6 +103,8 @@ def getGames():
 @app.route("/getGame/<int:id>", methods=["GET"])
 def getGameDetails(id):
     res = db.retrieve_game(id)
+    if res is None:
+        return "", 404
     return jsonify(res)
 
 @app.route("/updateChallenge", methods=["POST"]) # type: ignore
