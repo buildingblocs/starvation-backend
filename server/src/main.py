@@ -67,21 +67,26 @@ def home():
     return f"<h1>Starvation Backend :)</h1>"
 
 @app.route("/sendCode", methods=["POST"])
-# @login_required
+@jwt_required()
 def sendCode():
     data = request.get_json()
     code = data["code"]
     pid = data["id"]
+    if pid != current_user.id:
+        return "Unauthorized", 401
     code = code
     db.submit_code(pid, code)
     return "OK", 200
 
 @app.route("/sendCodeAI", methods=["POST"])
-# @login_required
+@jwt_required()
 def sendCodeAI():
     data = request.get_json()
     code = data["code"]
     level = data["level"]
+    pid = data["id"]
+    if pid != current_user.id:
+        return "Unauthorized", 401
     code = code
     return jsonify(dict(zip(("status", "output"), runner(code, level))))
 
