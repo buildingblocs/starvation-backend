@@ -52,6 +52,11 @@ def getPlayers():
     res = db.retrieve_all_players()
     return jsonify(res)
 
+@app.route("/getPlayer/<str:id>", methods=["GET"])
+def getPlayer(id: str):
+    res = db.retrieve_player(id)
+    return jsonify(res)
+
 @app.route("/getGames", methods=["GET"])
 def getGames():
     res = db.retrieve_all_games()
@@ -85,10 +90,10 @@ def updateDetails():
     except Exception as e:
         return str(e), 200
 
-@app.route("/existsUsername", methods=["GET"]) # type: ignore
+@app.route("/existsUsername", methods=["GET"])
 def existsUsername():
     username = request.args.get("username")
-    if username is None: return False
+    if username is None: return jsonify({"result": False})
     return jsonify({"result": db.does_username_exist(username)})
 
 @app.route("/deleteUser", methods=["POST"])

@@ -56,6 +56,12 @@ class Database:
                 data = cur.execute("SELECT id, time, player_1, player_2, finished, result, d1, d2 FROM games").fetchall()
         return data
     
+    def retrieve_player(self, id: str):
+        with self.conn.transaction():
+            with self.conn.cursor() as cur:
+                data = cur.execute("SELECT * FROM players WHERE id=%s", (id,)).fetchone()
+        return data
+    
     def retrieve_game(self, gid: int):
         with self.conn.transaction():
             with self.conn.cursor() as cur:
