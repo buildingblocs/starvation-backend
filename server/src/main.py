@@ -72,8 +72,8 @@ def updateDetails():
         if(data["pfp"]):
             pfp = data["pfp"].encode("utf-8")
         else:
-        with open("src/default.png", "rb") as f:
-                pfp = f.read()
+            with open("src/default.png", "rb") as f:
+                    pfp = f.read()
         db.updateUser(id, fullname, username, school, about, pfp)
         return "OK", 200
     except Exception as e:
