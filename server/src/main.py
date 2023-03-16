@@ -1,7 +1,7 @@
 from flask import Flask, redirect, request, jsonify, session
 from flask.json.provider import JSONProvider
 from flask_cors import CORS
-from flask_login import LoginManager, login_required, login_user, logout_user
+from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from oauthlib.oauth2 import WebApplicationClient
 import requests
 from database import Database
@@ -89,9 +89,8 @@ def getGameDetails(id):
     return jsonify(res)
 
 @app.route("/testLogin")
-@login_required  # will 401 if not logged in
 def testLogin():
-    return "OK", 200
+    return jsonify({"status": current_user.is_authenticated}) # type: ignore
 
 @app.route("/login")
 def login():
