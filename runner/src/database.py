@@ -44,6 +44,11 @@ class Database:
                                 replay jsonb,
                                 CONSTRAINT details_if_finished CHECK ( NOT (finished AND (result IS NULL OR d1 IS NULL OR d2 IS NULL OR replay IS NULL ))) 
                             )""")
+                # cur.execute("""CREATE TABLE IF NOT EXISTS levels (
+                #                 id varchar(255) not null PRIMARY KEY references playes(id) on delete cascade,
+                #                 code text,
+                                
+                #     )""")
                 
                 # cur.execute("""CREATE TABLE IF NOT EXISTS gcredentials (
 

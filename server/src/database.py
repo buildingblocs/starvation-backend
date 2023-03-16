@@ -14,6 +14,14 @@ class Database:
             with self.conn.cursor() as cur:
                 cur.execute("SELECT id FROM players WHERE id=%s", (id,))
                 return len(cur.fetchall()) == 1
+            
+    def updateUser(self, id: str, fullname: str, username: str, school: str, about: str, pfp: bytes):
+        if not self._does_user_exist(id):
+            warnings.warn("This user doesn't exist.")
+        else:
+            with self.conn.transaction():
+                with self.conn.cursor() as cur:
+                    cur.execute("UPDATE players SET fullname=%s, username=%s, school=%s, about=%s, pfp=%s WHERE id=%s", id, fullname, username, school, about, pfp)
 
     # adds user to the database
     def add_user(self, id: str, fullname: str, username: str, school: str, about: str, photo: bytes):
