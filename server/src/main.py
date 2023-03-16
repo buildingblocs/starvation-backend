@@ -73,7 +73,7 @@ def getPlayers():
     res = db.retrieve_all_players()
     return jsonify(res)
 
-@app.route("/getPlayer/<str:id>", methods=["GET"])
+@app.route("/getPlayer/<string:id>", methods=["GET"])
 def getPlayer(id: str):
     res = db.retrieve_player(id)
     return jsonify(res)
