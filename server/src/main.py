@@ -118,6 +118,9 @@ def login():
     _next = request.args.get("next") # redirect url at the end
     session["next"] = _next
 
+    create = request.args.get("create")
+    session["create"] = create
+
     # Find out what URL to hit for Google login
     authorization_endpoint = GOOGLE_PROVIDER_CONFIG["authorization_endpoint"]
 
@@ -163,7 +166,11 @@ def callback():
     
     user = User(id)
 
+    next_ = session.pop("next", "/")
+
     if not User.get(id):
+        if session["create"] != "true":
+            return redirect(next_)
         with open("src/default.png", "rb") as f:
             pfp = f.read()
         User.create(id, "", "", "", "", pfp)
@@ -171,7 +178,7 @@ def callback():
     login_user(user)
 
     # vulnerable to open redirect but welp
-    return redirect(session["next"])
+    return redirect(next_)
 
 @app.route("/updateDetails", methods=["POST"])
 @login_required
