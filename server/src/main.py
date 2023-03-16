@@ -62,19 +62,22 @@ def getGameDetails(id):
 
 @app.route("/updateDetails", methods=["POST"])
 def updateDetails():
-    data = request.get_json()
-    id = data["id"]
-    fullname = data["fullname"]
-    username = data["username"]
-    school = data["school"]
-    about = data["about"]
-    if(data["pfp"]):
-        pfp = data["pfp"].encode("utf-8")
-    else:
-       with open("src/default.png", "rb") as f:
-            pfp = f.read()
-    db.updateUser(id, fullname, username, school, about, pfp)
-    return "OK", 200
+    try:
+        data = request.get_json()
+        id = data["id"]
+        fullname = data["fullname"]
+        username = data["username"]
+        school = data["school"]
+        about = data["about"]
+        if(data["pfp"]):
+            pfp = data["pfp"].encode("utf-8")
+        else:
+        with open("src/default.png", "rb") as f:
+                pfp = f.read()
+        db.updateUser(id, fullname, username, school, about, pfp)
+        return "OK", 200
+    except Exception as e:
+        return str(e), 200
     
 
 @app.route("/addUser", methods=["POST"])
