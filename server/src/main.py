@@ -104,6 +104,13 @@ def getChallenge():
 
 @app.route("/testLogin")
 def testLogin():
+    if current_user.is_authenticated: # type: ignore
+        result = db.retrieve_player(current_user.get_id()) # type: ignore
+        if result is None:
+            logout_user()
+            return jsonify({"status": False})
+        result["status"] = True
+        return jsonify(result)
     return jsonify({"status": current_user.is_authenticated}) # type: ignore
 
 @app.route("/login")
