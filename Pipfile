@@ -9,6 +9,9 @@ orjson = "*"
 Flask = "*"
 Flask-Cors = "*"
 psycopg = {extras = ["binary"], version = "*"}
+flask-login = "*"
+oauthlib = "*"
+requests = "*"
 
 [dev-packages]
 black = "*"

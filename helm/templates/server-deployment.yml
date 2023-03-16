@@ -52,3 +52,18 @@ spec:
                 secretKeyRef:
                   name: postgres
                   key: database
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: server
+                  key: secret_key
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: server
+                  key: google_client_id
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: server
+                  key: google_client_secret

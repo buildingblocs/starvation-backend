@@ -9,6 +9,9 @@ Flask-Cors = "*"
 psycopg = {extras = ["c"], version = "*"}
 kubernetes = "*"
 orjson = "*"
+flask-login = "*"
+oauthlib = "*"
+requests = "*"
 
 [dev-packages]
 
