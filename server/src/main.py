@@ -4,6 +4,8 @@ from flask_cors import CORS
 from database import Database
 from sandbox.sandbox_ai import runner
 import orjson
+import base64
+from io import BytesIO
 
 app = Flask(__name__)
 app.secret_key = "super_secret_key"
@@ -70,7 +72,11 @@ def updateDetails():
         school = data["school"]
         about = data["about"]
         if(data["pfp"]):
-            pfp = data["pfp"].encode("utf-8")
+            f = BytesIO()
+            f.write(base64.b64decode(data["pfp"].encode("utf-8")))
+            f.seek(0)
+            pfp = f.read()
+            f.close()
         else:
             with open("src/default.png", "rb") as f:
                     pfp = f.read()
