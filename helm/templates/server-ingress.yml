@@ -3,6 +3,11 @@ kind: Ingress
 metadata:
   name: server-ingress
   namespace: server
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: starvation-backend
+    networking.gke.io/managed-certificates: managed-cert
+    kubernetes.io/ingress.class: "gce"
+
 spec:
   defaultBackend:
     service:

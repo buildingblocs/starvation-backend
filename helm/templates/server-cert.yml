@@ -1,0 +1,8 @@
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: server-cert
+  namespace: server
+spec:
+  domains:
+    - 35.213.150.238
