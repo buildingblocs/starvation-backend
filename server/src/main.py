@@ -89,7 +89,7 @@ def updateDetails():
 def exists_username():
     username = request.args.get("username")
     if username is None: return False
-    return db.does_username_exist(username)
+    return jsonify({"result": db.does_username_exist(username)})
 
 @app.route("/addUser", methods=["POST"])
 def addUser():

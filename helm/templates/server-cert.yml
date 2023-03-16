@@ -5,4 +5,4 @@ metadata:
   namespace: server
 spec:
   domains:
-    - api-starvation.buildingblocs.sg
+    - starvation-api.buildingblocs.sg
