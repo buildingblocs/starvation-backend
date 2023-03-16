@@ -73,7 +73,7 @@ def updateDetails():
         about = data["about"]
         if(data["pfp"]):
             f = BytesIO()
-            f.write(base64.b64decode(data["pfp"].encode("utf-8")))
+            f.write(base64.b64decode(data["pfp"]))
             f.seek(0)
             pfp = f.read()
             f.close()
