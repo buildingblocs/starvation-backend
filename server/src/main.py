@@ -88,6 +88,11 @@ def getGameDetails(id):
     res = db.retrieve_game(id)
     return jsonify(res)
 
+@app.route("/testLogin")
+@login_required  # will 401 if not logged in
+def testLogin():
+    return "OK", 200
+
 @app.route("/login")
 def login():
     _next = request.args.get("next") # redirect url at the end
