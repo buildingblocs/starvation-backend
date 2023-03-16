@@ -68,7 +68,7 @@ def updateDetails():
     username = data["username"]
     school = data["school"]
     about = data["about"]
-    if(data["pfp"])
+    if(data["pfp"]):
         pfp = data["pfp"].encode("utf-8")
     else:
        with open("src/default.png", "rb") as f:
