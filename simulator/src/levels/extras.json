@@ -49,15 +49,24 @@
         "template": "def distributePoints(skill_points):\n    health = 0\n    damage = 0\n    range = 0\n    speed = 0\n    return [health, damage, range, speed]\n\ndef decideAction(self):\n    #self.attack(-1)\n    #self.move(1)"
     },
     "level_8": {
-        "prepend": "",
-        "append": ""
+        "title": "Glass Cannons",
+        "description": "Luigi is making some glass cannons. Show Luigi why glass cannons are fragile!",
+        "prepend": "from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity",
+        "append": "",
+        "template": "def distributePoints(skill_points):\n    health = 0\n    damage = 0\n    range = 0\n    speed = 0\n    return [health, damage, range, speed]\n\ndef decideAction(self):\n    #self.attack(-1)\n    #self.move(1)"
     },
     "level_9": {
-        "prepend": "",
-        "append": ""
+        "title": "Sustenance",
+        "description": "Luigi gave his clones some weird pills, now they can heal. Help Mario defeat these mutants!",
+        "prepend": "from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity",
+        "append": "",
+        "template": "def distributePoints(skill_points):\n    health = 0\n    damage = 0\n    range = 0\n    speed = 0\n    return [health, damage, range, speed]\n\ndef decideAction(self):\n    #self.attack(-1)\n    #self.move(1)"
     },
     "level_10": {
-        "prepend": "",
-        "append": ""
+        "title": "Fixing plz help (this is supposed to be a boss)",
+        "description": "I suck at making games that actl work",
+        "prepend": "from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity",
+        "append": "",
+        "template": "def distributePoints(skill_points):\n    health = 0\n    damage = 0\n    range = 0\n    speed = 0\n    return [health, damage, range, speed]\n\ndef decideAction(self):\n    #self.attack(-1)\n    #self.move(1)"
     }
 }
