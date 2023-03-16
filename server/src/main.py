@@ -95,8 +95,8 @@ def testLogin():
         if result is None:
             logout_user()
             return jsonify({"status": False})
-        result["status"] = True
-        return jsonify(result)
+        response = {"user": result, "status": True}
+        return jsonify(response)
     return jsonify({"status": current_user.is_authenticated}) # type: ignore
 
 @app.route("/login")
