@@ -1,6 +1,6 @@
 import requests
 
-url = "http://34.142.168.126:3000"
+url = "http://starvation-api.buildingblocs.sg"
 
 # do a bot tournament!
 for i in range(1, 9): # lvl1 is broken :(
