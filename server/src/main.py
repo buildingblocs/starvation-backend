@@ -1,7 +1,7 @@
 from flask import Flask, redirect, request, jsonify, session
 from flask.json.provider import JSONProvider
 from flask_cors import CORS
-from flask_login import LoginManager, login_required, login_user, logout_user
+from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from oauthlib.oauth2 import WebApplicationClient
 import requests
 from database import Database
@@ -16,8 +16,6 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
 db = Database()
 CORS(app)
-
-BASE_URL = "https://starvation-api.buildingblocs.sg"
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
@@ -52,7 +50,7 @@ def home():
     return f"<h1>Starvation Backend :)</h1>"
 
 @app.route("/sendCode", methods=["POST"])
-@login_required
+# @login_required
 def sendCode():
     data = request.get_json()
     code = data["code"]
@@ -62,7 +60,7 @@ def sendCode():
     return "OK", 200
 
 @app.route("/sendCodeAI", methods=["POST"])
-@login_required
+# @login_required
 def sendCodeAI():
     data = request.get_json()
     code = data["code"]
@@ -104,6 +102,10 @@ def getChallenge():
     id = request.args.get("id", "")
     return jsonify(dict(code=db.get_challenge_code(id, level)))
 
+@app.route("/testLogin")
+def testLogin():
+    return jsonify({"status": current_user.is_authenticated}) # type: ignore
+
 @app.route("/login")
 def login():
     _next = request.args.get("next") # redirect url at the end
@@ -116,7 +118,7 @@ def login():
     # scopes that let you retrieve user's profile from Google
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
-        redirect_uri=BASE_URL + "/login/callback",
+        redirect_uri=request.base_url.replace("http://", "https://", 1) + "/callback",
         scope=["openid", "email"],
     )
     return redirect(request_uri)
@@ -130,8 +132,8 @@ def callback():
 
     token_url, headers, body = client.prepare_token_request(
         token_endpoint,
-        authorization_response=request.url,
-        redirect_url=BASE_URL + "/login/callback",
+        authorization_response=request.url.replace("http://", "https://", 1),
+        redirect_url=request.base_url.replace("http://", "https://", 1),
         code=code
     )
     token_response = requests.post(
