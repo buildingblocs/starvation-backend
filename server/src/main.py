@@ -17,6 +17,8 @@ app.secret_key = os.environ.get("SECRET_KEY")
 db = Database()
 CORS(app)
 
+BASE_URL = "https://starvation-api.buildingblocs.sg"
+
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
@@ -100,7 +102,7 @@ def login():
     # scopes that let you retrieve user's profile from Google
     request_uri = client.prepare_request_uri(
         authorization_endpoint,
-        redirect_uri=request.base_url + "/callback",
+        redirect_uri=BASE_URL + "/login/callback",
         scope=["openid", "email"],
     )
     return redirect(request_uri)
