@@ -73,7 +73,7 @@ def updateDetails():
     else:
        with open("src/default.png", "rb") as f:
             pfp = f.read()
-    db.updateUser(id, fullname, username, school, about, pfp);
+    db.updateUser(id, fullname, username, school, about, pfp)
     return "OK", 200
     
 
