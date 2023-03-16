@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+import uuid
 from flask import Flask, make_response, redirect, request, jsonify, session
 from flask.json.provider import JSONProvider
 from flask_cors import CORS
@@ -26,6 +27,8 @@ GOOGLE_PROVIDER_CONFIG = requests.get(GOOGLE_DISCOVERY_URL).json()
 app.config["JWT_SECRET_KEY"] = app.secret_key
 app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
 app.config["JWT_COOKIE_SECURE"] = True
+
+resolver_table = {}
 
 jwt = JWTManager(app)
 
@@ -188,12 +191,23 @@ def callback():
             pfp = f.read()
         db.add_user(id, "", "", "", "", pfp)
 
-    response = redirect(next_)
-    access_token = create_access_token(identity=User(id))
-    set_access_cookies(response, access_token) # type: ignore
+    code = uuid.uuid4().hex
+    resolver_table[code] = User(id)
 
     # vulnerable to open redirect but welp
-    return response
+    return redirect(next_ + "?code=" + code)
+
+@app.route("/login/resolver")
+def resolver():
+    code = request.args.get("code")
+    if code in resolver_table:
+        user = resolver_table[code]
+        del resolver_table[code]
+        access_token = create_access_token(identity=user)
+        response = jsonify({"status": True})
+        set_access_cookies(response, access_token)
+        return response
+    return jsonify({"status": False})
 
 @app.after_request
 def refresh_expiring_jwts(response):
