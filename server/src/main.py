@@ -220,7 +220,9 @@ def resolver():
 @jwt_required(refresh=True)
 def refresh_expiring_jwts():
     access_token = create_access_token(identity=current_user)
-    return jsonify(access_token=access_token)
+    time_till_renew = app.config["JWT_ACCESS_TOKEN_EXPIRES"] / 2
+    renew = arrow.utcnow() + time_till_renew
+    return jsonify(access_token=access_token, renew=renew.isoformat())
 
 @app.route("/updateDetails", methods=["POST"])
 @jwt_required()
