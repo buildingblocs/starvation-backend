@@ -22,7 +22,7 @@ class Database:
                 cur.execute("""CREATE TABLE IF NOT EXISTS players (
                                 id varchar(255) not null PRIMARY KEY,
                                 fullname varchar(255),
-                                username varchar(255),
+                                username varchar(255) not null unique,
                                 school varchar(100),
                                 about varchar(255),
                                 pfp bytea,
@@ -44,15 +44,12 @@ class Database:
                                 replay jsonb,
                                 CONSTRAINT details_if_finished CHECK ( NOT (finished AND (result IS NULL OR d1 IS NULL OR d2 IS NULL OR replay IS NULL ))) 
                             )""")
-                # cur.execute("""CREATE TABLE IF NOT EXISTS levels (
-                #                 id varchar(255) not null PRIMARY KEY references playes(id) on delete cascade,
-                #                 code text,
-                                
-                #     )""")
-                
-                # cur.execute("""CREATE TABLE IF NOT EXISTS gcredentials (
-
-                #             )""")
+                cur.execute("""CREATE TABLE IF NOT EXISTS levels (
+                                id varchar(255) not null references players(id) on delete cascade,
+                                level INT,
+                                code text,
+                                PRIMARY KEY(id, level)
+                            )""")
 
 
     def _does_user_exist(self, id: str):

@@ -9,14 +9,20 @@ class Database:
     def __init__(self):
         self.conn = psycopg.connect("", row_factory=dict_row)
 
-    def _does_user_exist(self, id: str):
+    def does_user_exist(self, id: str):
         with self.conn.transaction():
             with self.conn.cursor() as cur:
                 cur.execute("SELECT id FROM players WHERE id=%s", (id,))
                 return len(cur.fetchall()) == 1
             
+    def does_username_exist(self, username: str):
+        with self.conn.transaction():
+            with self.conn.cursor() as cur:
+                cur.execute("SELECT username FROM players WHERE username=%s", (username, ))
+                return len(cur.fetchall()) == 1
+            
     def updateUser(self, id: str, fullname: str, username: str, school: str, about: str, pfp: bytes):
-        if not self._does_user_exist(id):
+        if not self.does_user_exist(id):
             warnings.warn("This user doesn't exist.")
         else:
             with self.conn.transaction():
@@ -27,7 +33,7 @@ class Database:
     def add_user(self, id: str, fullname: str, username: str, school: str, about: str, photo: bytes):
         if id is None or fullname is None or id == "" or fullname == "":
             warnings.warn("ID and full name cannot be None or empty. No users added.")
-        elif self._does_user_exist(id):
+        elif self.does_user_exist(id):
             warnings.warn("Another user with the same ID already exists in the database. No users added.")
         else:
             with self.conn.transaction():

@@ -84,7 +84,11 @@ def updateDetails():
         return "OK", 200
     except Exception as e:
         return str(e), 200
-    
+
+@app.route("/existsUsername", methods=["GET"]) # type: ignore
+def exists_username():
+    username = request.args.get("username", "")
+    return db.does_username_exist(username)
 
 @app.route("/addUser", methods=["POST"])
 def addUser():
