@@ -50,7 +50,7 @@ def home():
     return f"<h1>Starvation Backend :)</h1>"
 
 @app.route("/sendCode", methods=["POST"])
-@login_required
+# @login_required
 def sendCode():
     data = request.get_json()
     code = data["code"]
@@ -60,7 +60,7 @@ def sendCode():
     return "OK", 200
 
 @app.route("/sendCodeAI", methods=["POST"])
-@login_required
+# @login_required
 def sendCodeAI():
     data = request.get_json()
     code = data["code"]
