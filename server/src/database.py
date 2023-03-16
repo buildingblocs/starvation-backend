@@ -59,7 +59,7 @@ class Database:
     def retrieve_player(self, id: str):
         with self.conn.transaction():
             with self.conn.cursor() as cur:
-                data = cur.execute("SELECT * FROM players WHERE id=%s", (id,)).fetchone()
+                data = cur.execute("SELECT id, fullname, username, school, about, pfp, score, num_games FROM players WHERE id=%s", (id,)).fetchone()
         return data
     
     def retrieve_game(self, gid: int):
