@@ -90,6 +90,20 @@ def getGameDetails(id):
     res = db.retrieve_game(id)
     return jsonify(res)
 
+@app.route("/updateChallenge", methods=["POST"]) # type: ignore
+def updateChallenge():
+    data = request.get_json()
+    id = data["id"]
+    level = data["level"]
+    code = data["code"]
+    db.submit_challenge(id, level, code)
+    
+@app.route("/getChallengeCode", methods=["GET"]) # type: ignore
+def getChallenge():
+    level = int(request.args.get("level", "0"))
+    id = request.args.get("id", "")
+    return jsonify(dict(code=db.get_challenge_code(id, level)))
+
 @app.route("/login")
 def login():
     _next = request.args.get("next") # redirect url at the end

@@ -77,7 +77,27 @@ class Database:
         with self.conn.transaction():
             with self.conn.cursor() as cur:
                 cur.execute("DELETE FROM players WHERE id=%s", (id,))
+                
+    def submit_challenge(self, id: str, level: int, code: str):
+        with self.conn.transaction():
+            with self.conn.cursor() as cur:
+                # Step 1: Check if {id} has submitted to {level} before
+                cur.execute("SELECT code FROM levels WHERE id=%s and level=%s", (id, level))
+                if len(cur.fetchall()): # has been uploaded before
+                    # Update the existing record
+                    cur.execute("UPDATE levels SET code=%s WHERE id=%s and level=%s", (code, id, level))
+                else: # no records
+                    # Create a new record
+                    cur.execute("INSERT INTO levels (id, level, code) VALUES (%s, %s, %s)", (id, level, code))
 
+    def get_challenge_code(self, id: str, level: int) -> str:
+        with self.conn.transaction():
+            with self.conn.cursor() as cur:
+                cur.execute("SELECT code FROM levels WHERE id=%s and level=%s", (id, level))
+                result = cur.fetchall()
+        
+        if len(result): return result[0]
+        else: return ""
     
     def close_connection(self):
         self.conn.close() # note: all commands ran after closing will not work
