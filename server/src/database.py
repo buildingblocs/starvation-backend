@@ -67,6 +67,11 @@ class Database:
             with self.conn.cursor() as cur:
                 cur.execute("UPDATE players SET code=%s, error_count=0, last_update=NOW(), games_since_update=0 WHERE id=%s", (code, pid))
 
+    def delete_user(self, id: str):
+        with self.conn.transaction():
+            with self.conn.cursor() as cur:
+                cur.execute("DELETE FROM players WHERE id=%s", (id,))
+
     
     def close_connection(self):
         self.conn.close() # note: all commands ran after closing will not work

@@ -86,10 +86,17 @@ def updateDetails():
         return str(e), 200
 
 @app.route("/existsUsername", methods=["GET"]) # type: ignore
-def exists_username():
+def existsUsername():
     username = request.args.get("username")
     if username is None: return False
     return jsonify({"result": db.does_username_exist(username)})
+
+@app.route("/deleteUser", methods=["POST"])
+def deleteUser():
+    data = request.get_json()
+    id = data["id"]
+    db.delete_user(id)
+    return "OK", 200
 
 @app.route("/addUser", methods=["POST"])
 def addUser():
