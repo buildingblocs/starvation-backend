@@ -12,6 +12,7 @@ orjson = "*"
 flask-jwt-extended = "*"
 oauthlib = "*"
 requests = "*"
+arrow = "*"
 
 [dev-packages]
 

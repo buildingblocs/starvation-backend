@@ -13,6 +13,7 @@ import orjson
 import base64
 import os
 from io import BytesIO
+import arrow
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
@@ -209,7 +210,9 @@ def resolver():
         del resolver_table[code]
         access_token = create_access_token(identity=user)
         refresh_token = create_refresh_token(identity=user)
-        response = jsonify({"status": True, "access_token": access_token, "refresh_token": refresh_token})
+        time_till_renew = app.config["JWT_ACCESS_TOKEN_EXPIRES"] / 2
+        renew = arrow.utcnow() + time_till_renew
+        response = jsonify({"status": True, "access_token": access_token, "refresh_token": refresh_token, "renew": renew.isoformat()})
         return response
     return jsonify({"status": False})
 

@@ -12,6 +12,7 @@ psycopg = {extras = ["binary"], version = "*"}
 flask-jwt-extended = "*"
 oauthlib = "*"
 requests = "*"
+arrow = "*"
 
 [dev-packages]
 black = "*"
