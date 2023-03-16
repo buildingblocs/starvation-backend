@@ -4,7 +4,7 @@ from flask import Flask, make_response, redirect, request, jsonify, session
 from flask.json.provider import JSONProvider
 from flask_cors import CORS
 from oauthlib.oauth2 import WebApplicationClient
-from flask_jwt_extended import JWTManager, create_access_token, current_user, get_jwt, get_jwt_identity, jwt_required
+from flask_jwt_extended import JWTManager, create_access_token, create_refresh_token, current_user, get_jwt, get_jwt_identity, jwt_required
 import requests
 from database import Database
 from sandbox.sandbox_ai import runner
@@ -208,7 +208,8 @@ def resolver():
         user = resolver_table[code]
         del resolver_table[code]
         access_token = create_access_token(identity=user)
-        response = jsonify({"status": True, "access_token": access_token})
+        refresh_token = create_refresh_token(identity=user)
+        response = jsonify({"status": True, "access_token": access_token, "refresh_token": refresh_token})
         return response
     return jsonify({"status": False})
 
