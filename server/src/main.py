@@ -35,7 +35,7 @@ def sendCode():
     data = request.get_json()
     code = data["code"]
     pid = data["id"]
-    code = "from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity\n\n" + code
+    code = code
     db.submit_code(pid, code)
     return "OK", 200
 
@@ -44,7 +44,7 @@ def sendCodeAI():
     data = request.get_json()
     code = data["code"]
     level = data["level"]
-    code = "from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity\n\n" + code
+    code = code
     return jsonify(dict(zip(("status", "output"), runner(code, level))))
 
 @app.route("/getPlayers", methods=["GET"])
