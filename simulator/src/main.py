@@ -77,7 +77,7 @@ def main():
 
         seconds_passed = time_passed // 30
 
-        if time_passed % 300 == 0:
+        if time_passed % 150 == 0: # every 5 seconds
             # Calculate the current number of points, and pass to user function
             summonTroops(1 + seconds_passed // 15)
 
