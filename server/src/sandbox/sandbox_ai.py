@@ -1,3 +1,4 @@
+import asyncio
 import time
 from typing import Mapping, Tuple, Union, Any
 import uuid
@@ -18,7 +19,7 @@ fp = Path(__file__).parent.absolute()
 client = kubernetes.client.CoreV1Api()
 
 
-def runner(solution_content: str, level: int) -> Tuple[bool, Mapping[str, Any]]:
+async def runner(solution_content: str, level: int) -> Tuple[bool, Mapping[str, Any]]:
     sandbox_name = f"sandbox-{uuid.uuid4()}"
 
     with open(fp / "sandbox-deployment.yml") as f:
@@ -32,7 +33,7 @@ def runner(solution_content: str, level: int) -> Tuple[bool, Mapping[str, Any]]:
         pod = client.read_namespaced_pod(name=sandbox_name, namespace="sandbox")
         if pod.status.phase != "Pending": # type: ignore
             break
-        time.sleep(0.1)
+        await asyncio.sleep(0.1)
 
     print("Starting judging...")
     start = time.time()
@@ -43,7 +44,7 @@ def runner(solution_content: str, level: int) -> Tuple[bool, Mapping[str, Any]]:
     # bro you want someone to just be able to sleep for 70 years???
     # 60s TL
     for i in range(600):
-        time.sleep(0.1)
+        await asyncio.sleep(0.1)
 
         pod = client.read_namespaced_pod(name=sandbox_name, namespace="sandbox")
 

@@ -30,5 +30,7 @@ ENV PATH="/.venv/bin:$PATH"
 # Install application into container
 COPY . .
 
+WORKDIR /src
+
 # Run the application
-ENTRYPOINT ["gunicorn", "-w", "1", "-b", "0.0.0.0:3000", "--chdir", "src", "-t", "120", "main:app"]
+ENTRYPOINT ["uvicorn", "--workers", "1", "--host", "0.0.0.0", "--port", "3000", "main:app"]

@@ -1,24 +1,22 @@
 from datetime import timedelta
-import uuid
-from flask import Flask, make_response, redirect, request, jsonify, session
-from flask.json.provider import JSONProvider
-from flask_cors import CORS
+from quart import Quart, redirect, request, jsonify
+from quart.json.provider import JSONProvider
+from quart_cors import cors
 from oauthlib.oauth2 import WebApplicationClient
-from flask_jwt_extended import JWTManager, create_access_token, create_refresh_token, current_user, get_jwt, get_jwt_identity, jwt_required
+from quart_jwt_extended import JWTManager, create_access_token, jwt_refresh_token_required, create_refresh_token, get_jwt_identity, jwt_required, jwt_optional
 import requests
 from database import Database
 from sandbox.sandbox_ai import runner
-from user import User
 import orjson
 import base64
 import os
 from io import BytesIO
 import arrow
 
-app = Flask(__name__)
+app = Quart(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
 db = Database()
-CORS(app)
+cors(app)
 
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
@@ -33,18 +31,6 @@ app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 jwt = JWTManager(app)
 
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
-
-@jwt.user_identity_loader
-def user_identity_lookup(user: User):
-    return user.id
-
-@jwt.user_lookup_loader
-def user_lookup_callback(_jwt_header, jwt_data):
-    identity = jwt_data["sub"]
-    player = db.retrieve_player(identity)
-    if not player:
-        return None
-    return User(player["id"])
 
 class ORJSONProvider(JSONProvider):
     def __init__(self, *args, **kwargs):
@@ -61,63 +47,63 @@ class ORJSONProvider(JSONProvider):
 app.json = ORJSONProvider(app)
 
 @app.route("/")
-def home():
+async def home():
     return f"<h1>Starvation Backend :)</h1>"
 
 @app.route("/sendCode", methods=["POST"])
-@jwt_required()
-def sendCode():
-    data = request.get_json()
+@jwt_required
+async def sendCode():
+    data = await request.get_json()
     code = data["code"]
     pid = data["id"]
-    if pid != current_user.id:
+    if pid != get_jwt_identity():
         return "Unauthorized", 401
     code = code
     db.submit_code(pid, code)
     return "OK", 200
 
 @app.route("/sendCodeAI", methods=["POST"])
-@jwt_required()
-def sendCodeAI():
-    data = request.get_json()
+@jwt_required
+async def sendCodeAI():
+    data = await request.get_json()
     code = data["code"]
     level = data["level"]
     pid = data["id"]
-    if pid != current_user.id:
+    if pid != get_jwt_identity():
         return "Unauthorized", 401
     code = code
-    return jsonify(dict(zip(("status", "output"), runner(code, level))))
+    return jsonify(dict(zip(("status", "output"), await runner(code, level))))
 
 @app.route("/getPlayers", methods=["GET"])
-def getPlayers():
+async def getPlayers():
     res = db.retrieve_all_players()
     return jsonify(res)
 
 @app.route("/getPlayer/<string:id>", methods=["GET"])
-def getPlayer(id: str):
+async def getPlayer(id: str):
     res = db.retrieve_player(id)
     if res is None:
         return "", 404
     return jsonify(res)
 
 @app.route("/getGames", methods=["GET"])
-def getGames():
+async def getGames():
     res = db.retrieve_all_games()
     return jsonify(res)
 
 @app.route("/getGame/<int:id>", methods=["GET"])
-def getGameDetails(id):
+async def getGameDetails(id):
     res = db.retrieve_game(id)
     if res is None:
         return "", 404
     return jsonify(res)
 
 @app.route("/updateChallenge", methods=["POST"])
-@jwt_required()
-def updateChallenge():
-    data = request.get_json()
+@jwt_required
+async def updateChallenge():
+    data = await request.get_json()
     id = data["id"]
-    if id != current_user.id:
+    if id != get_jwt_identity():
         return "Unauthorized", 401
     level = data["level"]
     code = data["code"]
@@ -125,29 +111,30 @@ def updateChallenge():
     return "OK", 200
 
 @app.route("/getChallenges/<string:id>", methods=["GET"])
-def challengesById(id):
+async def challengesById(id):
     return jsonify(challenges=db.retrieve_challenges(id))
     
 @app.route("/getChallengeCode", methods=["GET"]) # type: ignore
-def getChallenge():
+async def getChallenge():
     level = int(request.args.get("level", "0"))
     id = request.args.get("id", "")
     return jsonify(dict(code=db.get_challenge_code(id, level)))
 
 @app.route("/testLogin")
-@jwt_required(optional=True)
-def testLogin():
-    if current_user: # type: ignore
-        result = db.retrieve_player(current_user.id) # type: ignore
+@jwt_optional
+async def testLogin():
+    identity = get_jwt_identity()
+    if identity:
+        result = db.retrieve_player(identity)
         if result is None:
             response = jsonify({"status": False})
             return response
         response = {"user": result, "status": True}
         return jsonify(response)
-    return jsonify({"status": False}) # type: ignore
+    return jsonify({"status": False})
 
 @app.route("/login")
-def login():
+async def login():
     _next = request.args.get("next", "") # redirect url at the end
     create = request.args.get("create", "false")
 
@@ -167,7 +154,7 @@ def login():
     return response
 
 @app.route("/login/callback")
-def callback():
+async def callback():
     # Get authorization code Google sent back to you
     code = request.args.get("code")
 
@@ -222,13 +209,13 @@ def callback():
     return response
 
 @app.route("/login/resolver")
-def resolver():
+async def resolver():
     code = request.args.get("code")
     if code is None:
         return jsonify(status=False)
     id = db.resolve_code(code)
     if id:
-        user = User(id)
+        user = id
         access_token = create_access_token(identity=user)
         refresh_token = create_refresh_token(identity=user)
         time_till_renew = app.config["JWT_ACCESS_TOKEN_EXPIRES"] / 2
@@ -238,18 +225,18 @@ def resolver():
     return jsonify({"status": False})
 
 @app.route("/refresh", methods=["POST"])
-@jwt_required(refresh=True)
-def refresh_expiring_jwts():
-    access_token = create_access_token(identity=current_user)
+@jwt_refresh_token_required
+async def refresh_expiring_jwts():
+    access_token = create_access_token(identity=get_jwt_identity())
     time_till_renew = app.config["JWT_ACCESS_TOKEN_EXPIRES"] / 2
     renew = arrow.utcnow() + time_till_renew
     return jsonify(access_token=access_token, renew=renew.isoformat())
 
 @app.route("/updateDetails", methods=["POST"])
-@jwt_required()
-def updateDetails():
+@jwt_required
+async def updateDetails():
     try:
-        data = request.get_json()
+        data = await request.get_json()
         id = data["id"]
         fullname = data["fullname"]
         username = data["username"]
@@ -270,15 +257,15 @@ def updateDetails():
         return str(e), 200
 
 @app.route("/existsUsername", methods=["GET"])
-def existsUsername():
+async def existsUsername():
     username = request.args.get("username")
     if username is None: return jsonify({"result": False})
     return jsonify({"result": db.does_username_exist(username)})
 
 @app.route("/deleteUser", methods=["POST"])
-@jwt_required()
-def deleteUser():
-    data = request.get_json()
+@jwt_required
+async def deleteUser():
+    data = await request.get_json()
     id = data["id"]
     db.delete_user(id)
     return "OK", 200
