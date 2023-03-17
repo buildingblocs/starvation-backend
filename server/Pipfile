@@ -13,7 +13,7 @@ oauthlib = "*"
 requests = "*"
 arrow = "*"
 uvicorn = "*"
-psycopg = {extras = ["c", "pool"], version = "*"}
+psycopg = {extras = ["c"], version = "*"}
 
 [dev-packages]
 

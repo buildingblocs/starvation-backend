@@ -12,7 +12,7 @@ quart-jwt-extended = "*"
 oauthlib = "*"
 requests = "*"
 arrow = "*"
-psycopg = {extras = ["pool"], version = "*"}
+psycopg = "*"
 
 [dev-packages]
 black = "*"
