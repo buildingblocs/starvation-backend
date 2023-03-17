@@ -126,7 +126,7 @@ class Database:
     async def retrieve_challenges(self, id: str):
         async with self.conn.transaction():
             async with self.conn.cursor() as cur:
-                await cur.execute("SELECT id, lastUpdated FROM levels WHERE id=%s", (id,))
+                await cur.execute("SELECT id, lastUpdated, winner FROM levels WHERE id=%s", (id,))
                 result = await cur.fetchall()
         return result
     
