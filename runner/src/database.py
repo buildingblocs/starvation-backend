@@ -1,5 +1,5 @@
 from typing import Tuple, Union
-import psycopg
+from psycopg_pool import ConnectionPool
 import warnings
 from psycopg.rows import dict_row
 import dataclasses
@@ -11,14 +11,15 @@ class SimulationPlayer:
     score: int
 
 class Database:
-    __slots__ = ["conn"]
+    __slots__ = ["conn_pool", "row_factory"]
 
     def __init__(self):
-        self.conn = psycopg.connect("", row_factory=dict_row)
+        self.conn_pool = ConnectionPool("")
+        self.row_factory = dict_row
         
         # create table with ID (email address), full name, score
-        with self.conn.transaction():
-            with self.conn.cursor() as cur:
+        with self.conn_pool.connection() as conn:
+            with conn.cursor(row_factory=self.row_factory) as cur:
                 cur.execute("""CREATE TABLE IF NOT EXISTS players (
                                 id varchar(255) not null PRIMARY KEY,
                                 fullname varchar(255),
@@ -53,8 +54,8 @@ class Database:
 
 
     def _does_user_exist(self, id: str):
-        with self.conn.transaction():
-            with self.conn.cursor() as cur:
+        with self.conn_pool.connection() as conn:
+            with conn.cursor(row_factory=self.row_factory) as cur:
                 cur.execute("SELECT id FROM players WHERE id=%s", (id,))
                 return len(cur.fetchall()) == 1
 
@@ -65,18 +66,18 @@ class Database:
         elif not isinstance(delta, int):
             warnings.warn("Score must be an integer. No players affected.")
         else:
-            with self.conn.transaction():
-                with self.conn.cursor() as cur:
+            with self.conn_pool.connection() as conn:
+                with conn.cursor(row_factory=self.row_factory) as cur:
                     cur.execute("UPDATE players SET score=score+%s WHERE id=%s", (delta, id))
     
     def record_error(self, pid: str):
-        with self.conn.transaction():
-            with self.conn.cursor() as cur:
+        with self.conn_pool.connection() as conn:
+            with conn.cursor(row_factory=self.row_factory) as cur:
                 cur.execute("UPDATE players SET error_count=error_count+1 WHERE id=%s", (pid,))
     
     def record_game(self, game_id: int, d1: int, d2: int, details: str, result: str) -> None:
-        with self.conn.transaction():
-            with self.conn.cursor() as cur:
+        with self.conn_pool.connection() as conn:
+            with conn.cursor(row_factory=self.row_factory) as cur:
                 data = cur.execute("UPDATE games SET finished=true, result=%s, d1=%s, d2=%s, replay=%s WHERE id=%s RETURNING player_1, player_2", (result, d1, d2, details, game_id)).fetchall()
                 if len(data) == 0:
                     raise ValueError("Game ID not found")
@@ -88,8 +89,8 @@ class Database:
 
     def choose_game(self) -> Union[None, Tuple[int, SimulationPlayer, SimulationPlayer]]:
         # Greedy algorithm to choose a pair of players to play
-        with self.conn.transaction():
-            with self.conn.cursor() as cur:
+        with self.conn_pool.connection() as conn:
+            with conn.cursor(row_factory=self.row_factory) as cur:
                 # acquire lock
                 cur.execute("LOCK TABLE players IN ACCESS EXCLUSIVE MODE")
                 cur.execute("LOCK TABLE games IN ACCESS EXCLUSIVE MODE")
@@ -125,4 +126,4 @@ class Database:
 
     
     def close_connection(self):
-        self.conn.close() # note: all commands ran after closing will not work
+        self.conn_pool.close() # note: all commands ran after closing will not work

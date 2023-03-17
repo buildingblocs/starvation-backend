@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 Flask = "*"
 Flask-Cors = "*"
-psycopg = {extras = ["c"], version = "*"}
 kubernetes = "*"
 orjson = "*"
 flask-jwt-extended = "*"
@@ -14,6 +13,7 @@ oauthlib = "*"
 requests = "*"
 arrow = "*"
 gunicorn = "*"
+psycopg = {extras = ["pool"], version = "*"}
 
 [dev-packages]
 

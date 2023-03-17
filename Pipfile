@@ -8,12 +8,12 @@ kubernetes = "*"
 orjson = "*"
 Flask = "*"
 Flask-Cors = "*"
-psycopg = {extras = ["binary"], version = "*"}
 flask-jwt-extended = "*"
 oauthlib = "*"
 requests = "*"
 arrow = "*"
 gunicorn = "*"
+psycopg = {extras = ["pool"], version = "*"}
 
 [dev-packages]
 black = "*"
