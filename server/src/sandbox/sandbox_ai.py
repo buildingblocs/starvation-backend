@@ -56,22 +56,22 @@ def runner(solution_content: str, level: int) -> Tuple[bool, Mapping[str, Any]]:
     if pod.status.phase == "Running": # type: ignore
         print("Killing")
         client.delete_namespaced_pod(name=sandbox_name, namespace="sandbox")
-        return (False, {"error": "Time limit exceeded"})
+        return (False, {"error": "Time limit exceeded", "runtime": runtime})
+    
+    logs = client.read_namespaced_pod_log(name=sandbox_name, namespace="sandbox", follow=True)
+
+    json_out = logs.strip()
 
     if pod.status.phase == "Failed": # type: ignore
         print("Bad exit code")
         client.delete_namespaced_pod(name=sandbox_name, namespace="sandbox")
-        return (False, {"error": "Internal sandbox error: bad exit code"})
-
-    logs = client.read_namespaced_pod_log(name=sandbox_name, namespace="sandbox", follow=True)
-
-    json_out = logs.strip()
+        return (False, {"error": "Internal sandbox error: bad exit code", "details": json_out, "runtime": runtime})
 
     try:
         ret = orjson.loads(json_out.replace("'", '"'))
     except orjson.JSONDecodeError as e:
         client.delete_namespaced_pod(name=sandbox_name, namespace="sandbox")
-        return (False, {"error": f'{json_out}///{str(e)}'})
+        return (False, {"error": str(e), "details": json_out, "runtime": runtime})
 
     client.delete_namespaced_pod(name=sandbox_name, namespace="sandbox")
     return (True, ret)
