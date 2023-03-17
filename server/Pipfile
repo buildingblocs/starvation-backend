@@ -4,15 +4,16 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-Flask = "*"
-Flask-Cors = "*"
-psycopg = {extras = ["c"], version = "*"}
+quart = "*"
+quart-cors = "*"
 kubernetes = "*"
 orjson = "*"
-flask-jwt-extended = "*"
+quart-jwt-extended = "*"
 oauthlib = "*"
 requests = "*"
 arrow = "*"
+uvicorn = "*"
+psycopg = {extras = ["c"], version = "*"}
 
 [dev-packages]
 

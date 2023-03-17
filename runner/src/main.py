@@ -11,7 +11,7 @@ while True:
     print("Finding game...", flush=True)
     game = db.choose_game()
     if game is None:
-        time.sleep(5)
+        time.sleep(60)
         continue
 
     print("Game found", flush=True)
@@ -38,3 +38,5 @@ while True:
         # update scores
         d1, d2 = calc_elo(player_1.score, player_2.score, details["result"])
         db.record_game(game_id, d1, d2, orjson.dumps(details).decode('utf-8'), "success")
+
+    time.sleep(10)

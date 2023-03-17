@@ -30,5 +30,7 @@ ENV PATH="/.venv/bin:$PATH"
 # Install application into container
 COPY . .
 
+WORKDIR /src
+
 # Run the application
-ENTRYPOINT ["python", "src/main.py"]
+ENTRYPOINT ["uvicorn", "--workers", "1", "--host", "0.0.0.0", "--port", "3000", "main:app"]

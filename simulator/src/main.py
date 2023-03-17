@@ -49,7 +49,7 @@ def main():
     start = time.time()
 
     # Game Loop
-    for i in range(18000): # 5 minutes at 60fps
+    for i in range(5400): # 3 minutes at 30fps
         # clock.tick(FPS)
         # display_clock(seconds_passed)
 
@@ -75,14 +75,13 @@ def main():
         # if pause:
         #     continue
 
-        time_passed += 1
+        seconds_passed = time_passed // 30
 
-        if time_passed % 60 == 0:
-            seconds_passed += 1  # Timer in seconds for normal humans
-
-        if time_passed % 300 == 0:
+        if time_passed % 150 == 0: # every 5 seconds
             # Calculate the current number of points, and pass to user function
-            summonTroops(seconds_passed // 30)
+            summonTroops(1 + seconds_passed // 15)
+
+        time_passed += 1
 
         # For every troop, run update function
         for troop in leftTroops:
@@ -96,16 +95,15 @@ def main():
 
         for action in troop_actions_list:
             if action[0] == "attack":  # Process attack: [str, Troop, Troop]
+                action[1], action[2] = resolveTroop(action[1]), resolveTroop(action[2])
                 # Skip the attack if not possible (ie out of range)
                 if distanceToEntity(action[1], action[2]) > action[1]._rng: continue
 
                 action[2].update_health(-action[1]._dmg)
 
             else:  # Process move: [str, Troop, int]
-                if action[1].troop_id < 0:
-                    rightTroops[getTroopById(action[1])].update_position(action[2])
-                else:
-                    leftTroops[getTroopById(action[1])].update_position(action[2])
+                action[1] = resolveTroop(action[1])
+                action[1].update_position(action[2])
 
             # Troop regains action ability
             action[1]._action = True

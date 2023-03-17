@@ -5,6 +5,8 @@ kind: Service
 metadata:
   name: server-service
   namespace: server
+  annotations:
+    cloud.google.com/backend-config: '{"default": "server-backendconfig"}'
 
 spec:
   type: LoadBalancer
@@ -14,3 +16,4 @@ spec:
     - protocol: TCP
       port: 3000
       targetPort: 3000
+  type: NodePort

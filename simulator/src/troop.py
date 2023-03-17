@@ -2,6 +2,7 @@
 
 # Troop actions (array because need to sort by action type)
 troop_actions_list = []
+troops_moved = set()
 
 def sign(x): return 1 if x > 0 else 0 if x == 0 else -1
 
@@ -18,18 +19,20 @@ class Troop:
     _hlt: the real health of the troop
     _pos: the real position of the troop
     _action: if True, troop can use an action
+    _eps: a small epsilon value to account for floating point errors
     """
 
     def __init__(self, troop_id, skill_points, position):
         self._pos = self.position = position
         self.troop_id = troop_id
         self._action = True
+        self._eps = 1e-6
 
         # Health points, damage points, range points, speed points
         hp, dp, rp, sp = type(self).setSkill(skill_points)
 
         # Check if points are valid
-        if hp + dp + rp + sp > skill_points:
+        if hp + dp + rp + sp - self._eps > skill_points:
             raise ValueError("Conservation of Points violated")
         if hp < 0 or dp < 0 or rp < 0 or sp < 0:
             raise ValueError("Negative Points allocated!?")
@@ -37,9 +40,9 @@ class Troop:
         # Calculating and setting actual values
         # TODO: Make values balanced maybe
         self._hlt = self.health = 5 + (hp * 5)
-        self._dmg = (1 + (dp * 2)) / 30
+        self._dmg = (1 + (dp * 2)) / 10
         self._rng = 50 + (rp * 25)
-        self._spd = (10 + (sp * 5)) / 30
+        self._spd = (10 + (sp * 5)) / 5
 
     def attack(self, enemy):
         # Action Used already
@@ -105,3 +108,33 @@ class RightPlayerTroop(Troop):
     # Set the player's functions (I hope)
     def update(self):
         pass
+
+class ImmutableTroop:
+    def __init__(self, troop):
+        self.troop_id = troop.troop_id
+        self.health = troop.health
+        self.position = troop.position
+
+    def __repr__(self):
+        return "Troop " + str(self.troop_id) + " at " + str(self.position)
+    
+# class PlayerTroop:
+#     def __init__(self, troop):
+#         self.troop_id = troop.troop_id
+#         self.health = troop.health
+#         self.position = troop.position
+    
+#     def attack(self, enemy):
+#         # Action Used already
+#         if self.troop_id in troops_moved: return
+
+#         # Passes the "attack" action, the troop attacking and the troop attacked
+#         troop_actions_list.append(["attack", self, enemy, self._dmg])
+#         self._action = False
+
+#     def move(self, dir):
+#         # Action Used already
+#         if not self._action: return
+
+#         # Passes the "move" action, the troop that will be moved and how much by
+#         troop_actions_list.append(["move", self, sign(dir)])

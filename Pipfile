@@ -6,13 +6,13 @@ name = "pypi"
 [packages]
 kubernetes = "*"
 orjson = "*"
-Flask = "*"
-Flask-Cors = "*"
-psycopg = {extras = ["binary"], version = "*"}
-flask-jwt-extended = "*"
+quart = "*"
+quart-cors = "*"
+quart-jwt-extended = "*"
 oauthlib = "*"
 requests = "*"
 arrow = "*"
+psycopg = "*"
 
 [dev-packages]
 black = "*"

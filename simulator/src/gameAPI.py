@@ -1,5 +1,5 @@
 # Variables from other files
-from troop import Base, LeftPlayerTroop, RightPlayerTroop, troop_actions_list, Troop
+from troop import Base, ImmutableTroop, LeftPlayerTroop, RightPlayerTroop, troop_actions_list, Troop
 
 # Preparing API functions
 LEFT_BASE_POS = 0
@@ -31,12 +31,14 @@ def enemiesWithinRange(troop):
         enemies = rightTroops
     else:
         enemies = leftTroops
-    attackable = [i for i in enemies if distanceToEntity(troop, i) <= troop._rng]
+    troop = resolveTroop(troop)
+    attackable = [ImmutableTroop(i) for i in enemies if distanceToEntity(troop, i) <= troop._rng]
     return attackable
 
 
 def getFriendlyTroops(troop):
-    return leftTroops if troop.troop_id > 0 else rightTroops
+    troops = leftTroops if troop.troop_id > 0 else rightTroops
+    return [ImmutableTroop(i) for i in troops]
 
 
 def distanceToEntity(troop1, id):
@@ -76,3 +78,17 @@ def getTroopById(troop):
                 return pos
             pos += 1
     raise ValueError("Troop does not exist")
+
+def resolveTroop(immutableTroop):
+    if immutableTroop.troop_id > 0:
+        return leftTroops[getTroopById(immutableTroop)]
+    else:
+        return rightTroops[getTroopById(immutableTroop)]
+
+def cheatUpdateHealth(target_troop: ImmutableTroop, amount: int):
+    for troop in leftTroops:
+        if troop.troop_id == target_troop.troop_id:
+            troop.update_health(amount)
+    for troop in rightTroops:
+        if troop.troop_id == target_troop.troop_id:
+            troop.update_health(amount)
