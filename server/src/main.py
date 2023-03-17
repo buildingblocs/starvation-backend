@@ -114,10 +114,13 @@ def getGameDetails(id):
         return "", 404
     return jsonify(res)
 
-@app.route("/updateChallenge", methods=["POST"]) # type: ignore
+@app.route("/updateChallenge", methods=["POST"])
+@jwt_required()
 def updateChallenge():
     data = request.get_json()
     id = data["id"]
+    if id != current_user.id:
+        return "Unauthorized", 401
     level = data["level"]
     code = data["code"]
     db.submit_challenge(id, level, code)
