@@ -46,6 +46,10 @@ class ORJSONProvider(JSONProvider):
 
 app.json = ORJSONProvider(app)
 
+@app.before_serving
+async def init_db():
+    await db.init_connection()
+
 @app.route("/")
 async def home():
     return f"<h1>Starvation Backend :)</h1>"
@@ -59,7 +63,7 @@ async def sendCode():
     if pid != get_jwt_identity():
         return "Unauthorized", 401
     code = code
-    db.submit_code(pid, code)
+    await db.submit_code(pid, code)
     return "OK", 200
 
 @app.route("/sendCodeAI", methods=["POST"])
@@ -76,24 +80,24 @@ async def sendCodeAI():
 
 @app.route("/getPlayers", methods=["GET"])
 async def getPlayers():
-    res = db.retrieve_all_players()
+    res = await db.retrieve_all_players()
     return jsonify(res)
 
 @app.route("/getPlayer/<string:id>", methods=["GET"])
 async def getPlayer(id: str):
-    res = db.retrieve_player(id)
+    res = await db.retrieve_player(id)
     if res is None:
         return "", 404
     return jsonify(res)
 
 @app.route("/getGames", methods=["GET"])
 async def getGames():
-    res = db.retrieve_all_games()
+    res = await db.retrieve_all_games()
     return jsonify(res)
 
 @app.route("/getGame/<int:id>", methods=["GET"])
 async def getGameDetails(id):
-    res = db.retrieve_game(id)
+    res = await db.retrieve_game(id)
     if res is None:
         return "", 404
     return jsonify(res)
@@ -107,25 +111,25 @@ async def updateChallenge():
         return "Unauthorized", 401
     level = data["level"]
     code = data["code"]
-    db.submit_challenge(id, level, code)
+    await db.submit_challenge(id, level, code)
     return "OK", 200
 
 @app.route("/getChallenges/<string:id>", methods=["GET"])
 async def challengesById(id):
-    return jsonify(challenges=db.retrieve_challenges(id))
+    return jsonify(challenges=await db.retrieve_challenges(id))
     
 @app.route("/getChallengeCode", methods=["GET"]) # type: ignore
 async def getChallenge():
     level = int(request.args.get("level", "0"))
     id = request.args.get("id", "")
-    return jsonify(dict(code=db.get_challenge_code(id, level)))
+    return jsonify(dict(code=await db.get_challenge_code(id, level)))
 
 @app.route("/testLogin")
 @jwt_optional
 async def testLogin():
     identity = get_jwt_identity()
     if identity:
-        result = db.retrieve_player(identity)
+        result = await db.retrieve_player(identity)
         if result is None:
             response = jsonify({"status": False})
             return response
@@ -189,15 +193,15 @@ async def callback():
     response.set_cookie("next", "", expires=0)
     response.set_cookie("create", "", expires=0)
 
-    if not db.does_user_exist(id):
+    if not await db.does_user_exist(id):
         print(request.cookies.get("create"), flush=True)
         if request.cookies.get("create") != "true":
             return response
         with open("default.png", "rb") as f:
             pfp = f.read()
-        db.add_user(id, "", "", "", "", pfp)
+        await db.add_user(id, "", "", "", "", pfp)
 
-    code = db.add_resolver_id(id)
+    code = await db.add_resolver_id(id)
     if not code:
         return response
     
@@ -213,7 +217,7 @@ async def resolver():
     code = request.args.get("code")
     if code is None:
         return jsonify(status=False)
-    id = db.resolve_code(code)
+    id = await db.resolve_code(code)
     if id:
         user = id
         access_token = create_access_token(identity=user)
@@ -251,7 +255,7 @@ async def updateDetails():
         else:
             with open("default.png", "rb") as f:
                 pfp = f.read()
-        db.updateUser(id, fullname, username, school, about, pfp)
+        await db.updateUser(id, fullname, username, school, about, pfp)
         return "OK", 200
     except Exception as e:
         return str(e), 200
@@ -260,14 +264,14 @@ async def updateDetails():
 async def existsUsername():
     username = request.args.get("username")
     if username is None: return jsonify({"result": False})
-    return jsonify({"result": db.does_username_exist(username)})
+    return jsonify({"result": await db.does_username_exist(username)})
 
 @app.route("/deleteUser", methods=["POST"])
 @jwt_required
 async def deleteUser():
     data = await request.get_json()
     id = data["id"]
-    db.delete_user(id)
+    await db.delete_user(id)
     return "OK", 200
 
 # @app.route("/addUser", methods=["POST"])
@@ -283,7 +287,7 @@ async def deleteUser():
 #     else:
 #         with open("default.png", "rb") as f:
 #             photo = f.read()
-#     db.add_user(id, fullname, username, school, about, photo)
+#     await db.add_user(id, fullname, username, school, about, photo)
 #     return "OK", 200
 
 if __name__ == "__main__":
