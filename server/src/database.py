@@ -43,7 +43,7 @@ class Database:
                 return len(await cur.fetchall()) == 1
             
     async def updateUser(self, id: str, fullname: str, username: str, school: str, about: str, pfp: bytes):
-        if not self.does_user_exist(id):
+        if not await self.does_user_exist(id):
             warnings.warn("This user doesn't exist.")
         else:
             async with self.conn.transaction():
@@ -54,7 +54,7 @@ class Database:
     async def add_user(self, id: str, fullname: str, username: str, school: str, about: str, photo: bytes):
         if id is None or fullname is None:
             warnings.warn("ID and full name cannot be None or empty. No users added.")
-        elif self.does_user_exist(id):
+        elif await self.does_user_exist(id):
             warnings.warn("Another user async with the same ID already exists in the database. No users added.")
         else:
             async with self.conn.transaction():
