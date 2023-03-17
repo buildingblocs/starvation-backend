@@ -16,18 +16,20 @@ class Troop:
     _dmg: the dmg of the troop (when attack, enemy.health -= self.dmg)
     _spd: the speed of the troop (px per second)
     _action: if True, troop can use an action
+    _eps: a small epsilon value to account for floating point errors
     """
 
     def __init__(self, troop_id, skill_points, position):
         self.position = position
         self.troop_id = troop_id
         self._action = True
+        self._eps = 1e-6
 
         # Health points, damage points, range points, speed points
         hp, dp, rp, sp = type(self).setSkill(skill_points)
 
         # Check if points are valid
-        if hp + dp + rp + sp > skill_points:
+        if hp + dp + rp + sp - self._eps > skill_points:
             raise ValueError("Conservation of Points violated")
         if hp < 0 or dp < 0 or rp < 0 or sp < 0:
             raise ValueError("Negative Points allocated!?")
