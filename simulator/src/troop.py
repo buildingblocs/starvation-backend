@@ -37,7 +37,7 @@ class Troop:
         self.health = 5 + (hp * 5)
         self._dmg = (1 + (dp * 2)) / 30
         self._rng = 50 + (rp * 25)
-        self._spd = (10 + (sp * 5)) / 30
+        self._spd = (10 + (sp * 5)) / 15
 
     def attack(self, enemy):
         # Action Used already

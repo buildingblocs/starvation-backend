@@ -206,7 +206,7 @@ def callback():
         print(request.cookies.get("create"), flush=True)
         if request.cookies.get("create") != "true":
             return response
-        with open("src/default.png", "rb") as f:
+        with open("default.png", "rb") as f:
             pfp = f.read()
         db.add_user(id, "", "", "", "", pfp)
 
@@ -262,8 +262,8 @@ def updateDetails():
             pfp = f.read()
             f.close()
         else:
-            with open("src/default.png", "rb") as f:
-                    pfp = f.read()
+            with open("default.png", "rb") as f:
+                pfp = f.read()
         db.updateUser(id, fullname, username, school, about, pfp)
         return "OK", 200
     except Exception as e:
@@ -294,7 +294,7 @@ def deleteUser():
 #     if "photo" in data:
 #         photo = data["photo"].encode("utf-8")
 #     else:
-#         with open("src/default.png", "rb") as f:
+#         with open("default.png", "rb") as f:
 #             photo = f.read()
 #     db.add_user(id, fullname, username, school, about, photo)
 #     return "OK", 200
