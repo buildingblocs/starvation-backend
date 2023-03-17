@@ -111,7 +111,8 @@ async def updateChallenge():
         return "Unauthorized", 401
     level = data["level"]
     code = data["code"]
-    await db.submit_challenge(id, level, code)
+    winner = data['winner']
+    await db.submit_challenge(id, level, code, winner)
     return "OK", 200
 
 @app.route("/getChallenges/<string:id>", methods=["GET"])
