@@ -7,8 +7,6 @@ metadata:
     kubernetes.io/ingress.global-static-ip-name: starvation-backend
     networking.gke.io/managed-certificates: server-cert
     kubernetes.io/ingress.class: "gce"
-    cloud.google.com/backend-config: '{"default": "server-backendconfig"}'
-
 
 spec:
   defaultBackend:

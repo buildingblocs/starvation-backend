@@ -5,6 +5,7 @@ kind: Service
 metadata:
   name: server-service
   namespace: server
+  cloud.google.com/backend-config: '{"default": "server-backendconfig"}'
 
 spec:
   type: LoadBalancer
