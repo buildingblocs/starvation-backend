@@ -101,3 +101,16 @@ class RightPlayerTroop(Troop):
     # Set the player's functions (I hope)
     def update(self):
         pass
+
+class ImmutableTroop:
+    """
+    ImmutableTroop is a class that is used to pass information about troops to the player
+    """
+
+    def __init__(self, troop):
+        self.troop_id = troop.troop_id
+        self.health = troop.health
+        self.position = troop.position
+        
+    def __repr__(self):
+        return "Troop " + str(self.troop_id) + " at " + str(self.position)

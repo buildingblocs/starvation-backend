@@ -1,4 +1,4 @@
-from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity
+from gameAPI import enemiesWithinRange, getFriendlyTroops, distanceToEntity, cheatUpdateHealth
 
 # AI for level 9 (High Health + Healing)
 # Beaten by level 3 AI, beats level 4,5,6,7
@@ -15,6 +15,6 @@ def decideAction(self):
     # Attack any enemy within range
     if (len(enemies) > 0): 
         if(self.cnt % 2 == 0): self.attack(enemies[-1]) # Now targets troops first
-        else: self.update_health(5)
+        else: cheatUpdateHealth(self, 5)
     else:
         self.move(1)
