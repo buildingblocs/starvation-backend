@@ -31,4 +31,4 @@ ENV PATH="/.venv/bin:$PATH"
 COPY . .
 
 # Run the application
-ENTRYPOINT ["python", "src/main.py"]
+ENTRYPOINT ["gunicorn", "-w", "1", "-b", "0.0.0.0:3000", "src/main:app"]
