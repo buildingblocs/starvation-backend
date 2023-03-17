@@ -82,7 +82,6 @@ def main():
             summonTroops(1 + seconds_passed // 15)
 
         time_passed += 1
-        seconds_passed = time_passed // 30
 
         # For every troop, run update function
         for troop in leftTroops:
