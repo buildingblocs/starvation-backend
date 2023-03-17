@@ -75,14 +75,14 @@ def main():
         # if pause:
         #     continue
 
-        time_passed += 1
-
-        if time_passed % 60 == 0:
-            seconds_passed += 1  # Timer in seconds for normal humans
+        seconds_passed = time_passed // 30
 
         if time_passed % 300 == 0:
             # Calculate the current number of points, and pass to user function
-            summonTroops(seconds_passed // 30)
+            summonTroops(1 + seconds_passed // 15)
+
+        time_passed += 1
+        seconds_passed = time_passed // 30
 
         # For every troop, run update function
         for troop in leftTroops:
