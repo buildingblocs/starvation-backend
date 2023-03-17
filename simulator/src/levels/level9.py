@@ -14,7 +14,7 @@ def decideAction(self):
 
     # Attack any enemy within range
     if (len(enemies) > 0): 
-        if(cnt % 2 == 0): self.attack(enemies[-1]) # Now targets troops first
+        if(self.cnt % 2 == 0): self.attack(enemies[-1]) # Now targets troops first
         else: self.update_health(5)
     else:
         self.move(1)
