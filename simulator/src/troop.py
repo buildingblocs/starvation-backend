@@ -15,11 +15,13 @@ class Troop:
     _rng: the range of the troop (can attack if distance is <= range)
     _dmg: the dmg of the troop (when attack, enemy.health -= self.dmg)
     _spd: the speed of the troop (px per second)
+    _hlt: the real health of the troop
+    _pos: the real position of the troop
     _action: if True, troop can use an action
     """
 
     def __init__(self, troop_id, skill_points, position):
-        self.position = position
+        self._pos = self.position = position
         self.troop_id = troop_id
         self._action = True
 
@@ -34,7 +36,7 @@ class Troop:
 
         # Calculating and setting actual values
         # TODO: Make values balanced maybe
-        self.health = 5 + (hp * 5)
+        self._hlt = self.health = 5 + (hp * 5)
         self._dmg = (1 + (dp * 2)) / 30
         self._rng = 50 + (rp * 25)
         self._spd = (10 + (sp * 5)) / 30
@@ -56,13 +58,17 @@ class Troop:
         self._action = False
 
     def update_health(self, change):
-        self.health += change
+        self._hlt += change
+
+        self.health = self._hlt
 
     def update_position(self, direction):
         if self.troop_id < 0:  # move the other way
-            self.position -= self._spd * direction
+            self._pos -= self._spd * direction
         else:
-            self.position += self._spd * direction
+            self._pos += self._spd * direction
+        
+        self.position = self._pos
 
     def setSkill(skill):
         print("Called setSkill Parent")
@@ -77,8 +83,8 @@ class Base(Troop):
 
     def __init__(self, id, health, position):
         self.troop_id = id
-        self.health = health
-        self.position = position
+        self._hlt = self.health = health
+        self._pos = self.position = position
 
     def update(self):
         pass

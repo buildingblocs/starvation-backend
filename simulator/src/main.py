@@ -115,20 +115,20 @@ def main():
         # Prepare Big JSON for all that has happened in the simulator
         troops = dict()
         for troop in rightTroops + leftTroops:
-            troops[str(troop.troop_id)] = {"h": troop.health, "p": troop.position}
+            troops[str(troop.troop_id)] = {"h": troop._hlt, "p": troop._pos}
         details.append(troops)
 
         # Delete all dead troops
         for ind, troop in enumerate(rightTroops):
-            if troop.health <= 0:
+            if troop._hlt <= 0:
                 rightTroops.pop(ind)
         for ind, troop in enumerate(leftTroops):
-            if troop.health <= 0:
+            if troop._hlt <= 0:
                 leftTroops.pop(ind)
     else:
         # sudden death
-        left_health = leftTroops[0].health
-        right_health = rightTroops[0].health
+        left_health = leftTroops[0]._hlt
+        right_health = rightTroops[0]._hlt
         if left_health > right_health:
             result = "left"
             print("Left Wins")
@@ -139,8 +139,8 @@ def main():
             print("Draw")
 
     # Debugging Code to show every troop and their position
-    for i in leftTroops: print(i.troop_id, i.position, i.health)
-    for i in rightTroops: print(i.troop_id, i.position, i.health)
+    for i in leftTroops: print(i.troop_id, i._pos, i._hlt)
+    for i in rightTroops: print(i.troop_id, i._pos, i._hlt)
     print("================================================================")
     
     json_object = json.dumps({"details": details, "result": result, "runtime": time.time() - start}, separators=(',', ':'))

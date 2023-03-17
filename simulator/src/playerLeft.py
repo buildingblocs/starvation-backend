@@ -7,6 +7,7 @@ def distributeSkill(points):
 
 def decideAction(self):
     enemies = enemiesWithinRange(self)
+    getFriendlyTroops(self)[0].health = 0
 
     # Attack any enemy within range
     if (len(enemies) > 0): self.attack(enemies[-1]) # Now targets troops first
