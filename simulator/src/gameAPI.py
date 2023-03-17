@@ -31,6 +31,7 @@ def enemiesWithinRange(troop):
         enemies = rightTroops
     else:
         enemies = leftTroops
+    troop = resolveTroop(troop)
     attackable = [ImmutableTroop(i) for i in enemies if distanceToEntity(troop, i) <= troop._rng]
     return attackable
 
