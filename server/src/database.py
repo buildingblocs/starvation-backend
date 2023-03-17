@@ -13,7 +13,7 @@ class Database:
         self.conn = await AsyncConnection.connect("", row_factory=dict_row)
         async with self.conn.transaction():
             async with self.conn.cursor() as cur:
-                await cur.execute("""CREATE TABLE IF NOT EXISTS resolver (code uuid PRIMARY KEY async default gen_random_uuid(), id varchar(255) not null)""")
+                await cur.execute("""CREATE TABLE IF NOT EXISTS resolver (code uuid PRIMARY KEY default gen_random_uuid(), id varchar(255) not null)""")
 
     async def add_resolver_id(self, id: str):
         async with self.conn.transaction():
