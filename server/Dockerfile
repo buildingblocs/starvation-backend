@@ -31,4 +31,4 @@ ENV PATH="/.venv/bin:$PATH"
 COPY . .
 
 # Run the application
-ENTRYPOINT ["gunicorn", "-w", "1", "-b", "0.0.0.0:3000", "--chdir", "src", "main:app"]
+ENTRYPOINT ["gunicorn", "-w", "1", "-b", "0.0.0.0:3000", "--chdir", "src", "-t", "60", "main:app"]
