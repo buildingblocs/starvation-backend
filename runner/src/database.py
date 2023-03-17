@@ -50,6 +50,11 @@ class Database:
                                 code text,
                                 PRIMARY KEY(id, level)
                             )""")
+                cur.execute("""IF COL_LENGTH(levels, winner) IS NULL
+                            BEGIN
+                                ALTER TABLE levels
+                                ADD winner BOOLEAN default false
+                            END""")
 
 
     def _does_user_exist(self, id: str):
