@@ -111,12 +111,13 @@ async def updateChallenge():
         return "Unauthorized", 401
     level = data["level"]
     code = data["code"]
-    await db.submit_challenge(id, level, code)
+    winner = data['winner']
+    await db.submit_challenge(id, level, code, winner)
     return "OK", 200
 
 @app.route("/getChallenges/<string:id>", methods=["GET"])
 async def challengesById(id):
-    return jsonify(challenges=await db.retrieve_challenges(id))
+    return jsonify(await db.retrieve_challenges(id))
     
 @app.route("/getChallengeCode", methods=["GET"]) # type: ignore
 async def getChallenge():

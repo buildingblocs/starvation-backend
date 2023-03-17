@@ -50,6 +50,8 @@ class Database:
                                 code text,
                                 PRIMARY KEY(id, level)
                             )""")
+                cur.execute("""ALTER TABLE levels ADD COLUMN IF NOT EXISTS winner BOOLEAN NOT NULL default false""")
+                cur.execute("""ALTER TABLE levels ADD COLUMN IF NOT EXISTS lastUpdated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP""")
 
 
     def _does_user_exist(self, id: str):

@@ -102,17 +102,17 @@ class Database:
             async with self.conn.cursor() as cur:
                 await cur.execute("DELETE FROM players WHERE id=%s", (id,))
                 
-    async def submit_challenge(self, id: str, level: int, code: str):
+    async def submit_challenge(self, id: str, level: int, code: str, winner: bool = False):
         async with self.conn.transaction():
             async with self.conn.cursor() as cur:
                 # Step 1: Check if {id} has submitted to {level} before
                 await cur.execute("SELECT code FROM levels WHERE id=%s and level=%s", (id, level))
                 if len(await cur.fetchall()): # has been uploaded before
                     # Update the existing record
-                    await cur.execute("UPDATE levels SET code=%s WHERE id=%s and level=%s", (code, id, level))
+                    await cur.execute("UPDATE levels SET code=%s, winner=%s, lastUpdated=CURRENT_TIMESTAMP WHERE id=%s and level=%s", (code, winner, id, level))
                 else: # no records
                     # Create a new record
-                    await cur.execute("INSERT INTO levels (id, level, code) VALUES (%s, %s, %s)", (id, level, code))
+                    await cur.execute("INSERT INTO levels (id, level, code, winner) VALUES (%s, %s, %s, %s)", (id, level, code, winner))
 
     async def get_challenge_code(self, id: str, level: int) -> str:
         async with self.conn.transaction():
@@ -126,7 +126,7 @@ class Database:
     async def retrieve_challenges(self, id: str):
         async with self.conn.transaction():
             async with self.conn.cursor() as cur:
-                await cur.execute("SELECT id FROM levels WHERE id=%s", (id,))
+                await cur.execute("SELECT level, lastUpdated, winner FROM levels WHERE id=%s", (id,))
                 result = await cur.fetchall()
         return result
     
