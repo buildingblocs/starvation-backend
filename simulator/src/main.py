@@ -49,7 +49,7 @@ def main():
     start = time.time()
 
     # Game Loop
-    for i in range(18000): # 5 minutes at 60fps
+    for i in range(5400): # 3 minutes at 30fps
         # clock.tick(FPS)
         # display_clock(seconds_passed)
 
