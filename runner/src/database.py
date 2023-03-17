@@ -55,6 +55,11 @@ class Database:
                                 ALTER TABLE levels
                                 ADD winner BOOLEAN default false
                             END""")
+                cur.execute("""IF COL_LENGTH(levels, lastUpdated) IS NULL
+                            BEGIN
+                                ALTER TABLE levels
+                                ADD lastUpdated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                            END""")
 
 
     def _does_user_exist(self, id: str):

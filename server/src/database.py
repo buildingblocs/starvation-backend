@@ -109,10 +109,10 @@ class Database:
                 await cur.execute("SELECT code FROM levels WHERE id=%s and level=%s", (id, level))
                 if len(await cur.fetchall()): # has been uploaded before
                     # Update the existing record
-                    await cur.execute("UPDATE levels SET code=%s, winner=%s WHERE id=%s and level=%s", (code, winner, id, level))
+                    await cur.execute("UPDATE levels SET code=%s, winner=%s, lastUpdated=CURRENT_TIMESTAMP WHERE id=%s and level=%s", (code, winner, id, level))
                 else: # no records
                     # Create a new record
-                    await cur.execute("INSERT INTO levels (id, level, code, winner) VALUES (%s, %s, %s)", (id, level, code, winner))
+                    await cur.execute("INSERT INTO levels (id, level, code, winner) VALUES (%s, %s, %s, %s)", (id, level, code, winner))
 
     async def get_challenge_code(self, id: str, level: int) -> str:
         async with self.conn.transaction():
