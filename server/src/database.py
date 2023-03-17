@@ -102,6 +102,13 @@ class Database:
         if len(result): return result[0]["code"]
         else: return ""
     
+    def retrieve_challenges(self, id: str) -> str:
+        with self.conn.transaction():
+            with self.conn.cursor() as cur:
+                cur.execute("SELECT id FROM levels WHERE id=%s", (id,))
+                result = cur.fetchall()
+        return result
+    
     def close_connection(self):
         self.conn.close() # note: all commands ran after closing will not work
         

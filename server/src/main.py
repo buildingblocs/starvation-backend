@@ -121,6 +121,10 @@ def updateChallenge():
     level = data["level"]
     code = data["code"]
     db.submit_challenge(id, level, code)
+
+@app.route("/getChallenges/<string:id>", methods=["GET"])
+def challengesById(id):
+    return jsonify(challenges=db.retrieve_challenges(id))
     
 @app.route("/getChallengeCode", methods=["GET"]) # type: ignore
 def getChallenge():
