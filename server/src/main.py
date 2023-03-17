@@ -148,11 +148,8 @@ def testLogin():
 
 @app.route("/login")
 def login():
-    _next = request.args.get("next") # redirect url at the end
-    session["next"] = _next
-
-    create = request.args.get("create")
-    session["create"] = create
+    _next = request.args.get("next", "") # redirect url at the end
+    create = request.args.get("create", "false")
 
     # Find out what URL to hit for Google login
     authorization_endpoint = GOOGLE_PROVIDER_CONFIG["authorization_endpoint"]
@@ -164,7 +161,10 @@ def login():
         redirect_uri=request.base_url.replace("http://", "https://", 1) + "/callback",
         scope=["openid", "email"],
     )
-    return redirect(request_uri)
+    response = redirect(request_uri)
+    response.set_cookie("next", _next)
+    response.set_cookie("create", create)
+    return response
 
 @app.route("/login/callback")
 def callback():
@@ -197,22 +197,29 @@ def callback():
     else:
         return "User email not available or not verified by Google.", 400
 
-    next_ = session.pop("next", "/")
+    next_ = request.cookies.get("next", "/")
+    response = redirect(next_)
+    response.set_cookie("next", "", expires=0)
+    response.set_cookie("create", "", expires=0)
 
     if not db.does_user_exist(id):
-        print(session["create"], flush=True)
-        if session.pop("create", None) != "true":
-            return redirect(next_)
+        print(request.cookies.get("create"), flush=True)
+        if request.cookies.get("create") != "true":
+            return response
         with open("src/default.png", "rb") as f:
             pfp = f.read()
         db.add_user(id, "", "", "", "", pfp)
 
     code = db.add_resolver_id(id)
     if not code:
-        return redirect(next_)
+        return response
+    
+    response = redirect(next_ + "?code=" + code)
+    response.set_cookie("next", "", expires=0)
+    response.set_cookie("create", "", expires=0)
 
     # vulnerable to open redirect but welp
-    return redirect(next_ + "?code=" + code)
+    return response
 
 @app.route("/login/resolver")
 def resolver():
