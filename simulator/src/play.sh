@@ -13,7 +13,11 @@ then
     cp "./levels/level$3.py" playerRight.py
 fi
 
-python main.py 
-# >/dev/null 2>&1
+python main.py >logs.txt 2>&1
 
-cat results.json
+if [ -e results.json ]
+then
+    cat results.json
+else
+    cat logs.txt
+fi
