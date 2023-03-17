@@ -117,7 +117,7 @@ async def updateChallenge():
 
 @app.route("/getChallenges/<string:id>", methods=["GET"])
 async def challengesById(id):
-    return jsonify(dict(challenges=await db.retrieve_challenges(id)))
+    return jsonify(await db.retrieve_challenges(id))
     
 @app.route("/getChallengeCode", methods=["GET"]) # type: ignore
 async def getChallenge():
