@@ -121,6 +121,7 @@ def updateChallenge():
     level = data["level"]
     code = data["code"]
     db.submit_challenge(id, level, code)
+    return "OK", 200
 
 @app.route("/getChallenges/<string:id>", methods=["GET"])
 def challengesById(id):
