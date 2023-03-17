@@ -8,7 +8,25 @@ class Database:
 
     def __init__(self):
         self.conn = psycopg.connect("", row_factory=dict_row)
+        with self.conn.transaction():
+            with self.conn.cursor() as cur:
+                cur.execute("""CREATE TABLE IF NOT EXISTS resolver (code uuid PRIMARY KEY default gen_random_uuid(), id varchar(255) not null)""")
 
+    def add_resolver_id(self, id: str):
+        with self.conn.transaction():
+            with self.conn.cursor() as cur:
+                data = cur.execute("INSERT INTO resolver(id) values(%s) RETURNING code", (id,)).fetchone()
+        return data["code"] if data else None
+    
+    def resolve_code(self, code: str):
+        with self.conn.transaction():
+            with self.conn.cursor() as cur:
+                data = cur.execute("SELECT id FROM resolver WHERE code=%s", (code,)).fetchone()
+                if data is None:
+                    return None
+                cur.execute("DELETE FROM resolver WHERE code=%s", (code,))
+                return data["id"]
+    
     def does_user_exist(self, id: str):
         with self.conn.transaction():
             with self.conn.cursor() as cur:
@@ -102,7 +120,7 @@ class Database:
         if len(result): return result[0]["code"]
         else: return ""
     
-    def retrieve_challenges(self, id: str) -> str:
+    def retrieve_challenges(self, id: str):
         with self.conn.transaction():
             with self.conn.cursor() as cur:
                 cur.execute("SELECT id FROM levels WHERE id=%s", (id,))

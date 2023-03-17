@@ -30,8 +30,6 @@ app.config["JWT_TOKEN_LOCATION"] = ["headers"]
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
 
-resolver_table = {}
-
 jwt = JWTManager(app)
 
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
@@ -209,8 +207,9 @@ def callback():
             pfp = f.read()
         db.add_user(id, "", "", "", "", pfp)
 
-    code = uuid.uuid4().hex
-    resolver_table[code] = User(id)
+    code = db.add_resolver_id(id)
+    if not code:
+        return redirect(next_)
 
     # vulnerable to open redirect but welp
     return redirect(next_ + "?code=" + code)
@@ -218,9 +217,11 @@ def callback():
 @app.route("/login/resolver")
 def resolver():
     code = request.args.get("code")
-    if code in resolver_table:
-        user = resolver_table[code]
-        del resolver_table[code]
+    if code is None:
+        return jsonify(status=False)
+    id = db.resolve_code(code)
+    if id:
+        user = User(id)
         access_token = create_access_token(identity=user)
         refresh_token = create_refresh_token(identity=user)
         time_till_renew = app.config["JWT_ACCESS_TOKEN_EXPIRES"] / 2
