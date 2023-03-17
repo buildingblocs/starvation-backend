@@ -95,16 +95,15 @@ def main():
 
         for action in troop_actions_list:
             if action[0] == "attack":  # Process attack: [str, Troop, Troop]
+                action[1], action[2] = resolveTroop(action[1]), resolveTroop(action[2])
                 # Skip the attack if not possible (ie out of range)
                 if distanceToEntity(action[1], action[2]) > action[1]._rng: continue
 
                 action[2].update_health(-action[1]._dmg)
 
             else:  # Process move: [str, Troop, int]
-                if action[1].troop_id < 0:
-                    rightTroops[getTroopById(action[1])].update_position(action[2])
-                else:
-                    leftTroops[getTroopById(action[1])].update_position(action[2])
+                action[1] = resolveTroop(action[1])
+                action[1].update_position(action[2])
 
             # Troop regains action ability
             action[1]._action = True

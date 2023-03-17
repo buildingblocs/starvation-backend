@@ -2,6 +2,7 @@
 
 # Troop actions (array because need to sort by action type)
 troop_actions_list = []
+troops_moved = set()
 
 def sign(x): return 1 if x > 0 else 0 if x == 0 else -1
 
@@ -103,14 +104,31 @@ class RightPlayerTroop(Troop):
         pass
 
 class ImmutableTroop:
-    """
-    ImmutableTroop is a class that is used to pass information about troops to the player
-    """
-
     def __init__(self, troop):
         self.troop_id = troop.troop_id
         self.health = troop.health
         self.position = troop.position
-        
+
     def __repr__(self):
         return "Troop " + str(self.troop_id) + " at " + str(self.position)
+    
+# class PlayerTroop:
+#     def __init__(self, troop):
+#         self.troop_id = troop.troop_id
+#         self.health = troop.health
+#         self.position = troop.position
+    
+#     def attack(self, enemy):
+#         # Action Used already
+#         if self.troop_id in troops_moved: return
+
+#         # Passes the "attack" action, the troop attacking and the troop attacked
+#         troop_actions_list.append(["attack", self, enemy, self._dmg])
+#         self._action = False
+
+#     def move(self, dir):
+#         # Action Used already
+#         if not self._action: return
+
+#         # Passes the "move" action, the troop that will be moved and how much by
+#         troop_actions_list.append(["move", self, sign(dir)])

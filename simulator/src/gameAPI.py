@@ -78,6 +78,12 @@ def getTroopById(troop):
             pos += 1
     raise ValueError("Troop does not exist")
 
+def resolveTroop(immutableTroop):
+    if immutableTroop.troop_id > 0:
+        return leftTroops[getTroopById(immutableTroop)]
+    else:
+        return rightTroops[getTroopById(immutableTroop)]
+
 def cheatUpdateHealth(target_troop: ImmutableTroop, amount: int):
     for troop in leftTroops:
         if troop.troop_id == target_troop.troop_id:
