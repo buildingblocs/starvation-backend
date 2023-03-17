@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta
 import uuid
 from flask import Flask, make_response, redirect, request, jsonify, session
 from flask.json.provider import JSONProvider
@@ -214,7 +214,7 @@ def callback():
     if not code:
         return response
     
-    response = redirect(next_ + "?code=" + code)
+    response = redirect(next_ + "?code=" + code.hex)
     response.set_cookie("next", "", expires=0)
     response.set_cookie("create", "", expires=0)
 
