@@ -27,8 +27,8 @@ spec:
           {{- end }}
           resources:
             limits:
-              memory: "1Gi"
-              cpu: "100m"
+              memory: "256Mi"
+              cpu: "150m"
           env:
             - name: PGHOST
               valueFrom:
