@@ -215,7 +215,7 @@ jobs:
       uses: 'google-github-actions/get-gke-credentials@v1'
       with:
         cluster_name: 'starvation-1'
-        location: 'asia-southeast-a'
+        location: 'asia-southeast1-a'
 
     - name: 'Upgrade Helm chart'
       run: |
