@@ -66,16 +66,16 @@ async def sendCode():
     await db.submit_code(pid, code)
     return "OK", 200
 
+#@jwt_required
 @app.route("/sendCodeAI", methods=["POST"])
-@jwt_required
 async def sendCodeAI():
     data = await request.get_json()
     code = data["code"]
     level = data["level"]
     pid = data["id"]
-    if pid != get_jwt_identity():
-        return "Unauthorized", 401
-    code = code
+#     if pid != get_jwt_identity():
+#         return "Unauthorized", 401
+#     code = code
     return jsonify(dict(zip(("status", "output"), await runner(code, level))))
 
 @app.route("/getPlayers", methods=["GET"])
