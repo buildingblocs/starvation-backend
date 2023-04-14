@@ -1,5 +1,5 @@
 from datetime import timedelta
-from quart import Quart, redirect, request, jsonify
+from quart import Quart, redirect, request, jsonify, url_for
 from quart.json.provider import JSONProvider
 from quart_cors import cors
 from oauthlib.oauth2 import WebApplicationClient
@@ -67,14 +67,14 @@ async def sendCode():
     return "OK", 200
 
 @app.route("/sendCodeAI", methods=["POST"])
-@jwt_required
+# @jwt_required
 async def sendCodeAI():
     data = await request.get_json()
     code = data["code"]
     level = data["level"]
     pid = data["id"]
-    if pid != get_jwt_identity():
-        return "Unauthorized", 401
+    # if pid != get_jwt_identity():
+    #     return "Unauthorized", 401
     code = code
     return jsonify(dict(zip(("status", "output"), await runner(code, level))))
 
@@ -140,67 +140,70 @@ async def testLogin():
 
 @app.route("/login")
 async def login():
-    _next = request.args.get("next", "") # redirect url at the end
-    create = request.args.get("create", "false")
+    # _next = request.args.get("next", "") # redirect url at the end
+    # create = request.args.get("create", "false")
 
-    # Find out what URL to hit for Google login
-    authorization_endpoint = GOOGLE_PROVIDER_CONFIG["authorization_endpoint"]
+    # # Find out what URL to hit for Google login
+    # authorization_endpoint = GOOGLE_PROVIDER_CONFIG["authorization_endpoint"]
 
-    # Use library to construct the request for Google login and provide
-    # scopes that let you retrieve user's profile from Google
-    request_uri = client.prepare_request_uri(
-        authorization_endpoint,
-        redirect_uri=request.base_url.replace("http://", "https://", 1) + "/callback",
-        scope=["openid", "email"],
-    )
-    response = redirect(request_uri)
-    response.set_cookie("next", _next)
-    response.set_cookie("create", create)
-    return response
+    # # Use library to construct the request for Google login and provide
+    # # scopes that let you retrieve user's profile from Google
+    # request_uri = client.prepare_request_uri(
+    #     authorization_endpoint,
+    #     redirect_uri=request.base_url.replace("http://", "https://", 1) + "/callback",
+    #     scope=["openid", "email"],
+    # )
+    # response = redirect(request_uri)
+    # response.set_cookie("next", _next)
+    # response.set_cookie("create", create)
+    # return response
+    return redirect(url_for("callback"))
 
 @app.route("/login/callback")
 async def callback():
-    # Get authorization code Google sent back to you
-    code = request.args.get("code")
+    # # Get authorization code Google sent back to you
+    # code = request.args.get("code")
 
-    token_endpoint = GOOGLE_PROVIDER_CONFIG["token_endpoint"]
+    # token_endpoint = GOOGLE_PROVIDER_CONFIG["token_endpoint"]
 
-    token_url, headers, body = client.prepare_token_request(
-        token_endpoint,
-        authorization_response=request.url.replace("http://", "https://", 1),
-        redirect_url=request.base_url.replace("http://", "https://", 1),
-        code=code
-    )
-    token_response = requests.post(
-        token_url,
-        headers=headers,
-        data=body,
-        auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
-    )
+    # token_url, headers, body = client.prepare_token_request(
+    #     token_endpoint,
+    #     authorization_response=request.url.replace("http://", "https://", 1),
+    #     redirect_url=request.base_url.replace("http://", "https://", 1),
+    #     code=code
+    # )
+    # token_response = requests.post(
+    #     token_url,
+    #     headers=headers,
+    #     data=body,
+    #     auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
+    # )
 
-    client.parse_request_body_response(token_response.text)
+    # client.parse_request_body_response(token_response.text)
 
-    userinfo_endpoint = GOOGLE_PROVIDER_CONFIG["userinfo_endpoint"]
-    uri, headers, body = client.add_token(userinfo_endpoint)
-    userinfo_response = requests.get(uri, headers=headers, data=body)
+    # userinfo_endpoint = GOOGLE_PROVIDER_CONFIG["userinfo_endpoint"]
+    # uri, headers, body = client.add_token(userinfo_endpoint)
+    # userinfo_response = requests.get(uri, headers=headers, data=body)
 
-    if userinfo_response.json().get("email_verified"):
-        id = userinfo_response.json()["email"]
-    else:
-        return "User email not available or not verified by Google.", 400
+    # if userinfo_response.json().get("email_verified"):
+    #     id = userinfo_response.json()["email"]
+    # else:
+    #     return "User email not available or not verified by Google.", 400
+
+    id = "guest"
 
     next_ = request.cookies.get("next", "/")
     response = redirect(next_)
     response.set_cookie("next", "", expires=0)
     response.set_cookie("create", "", expires=0)
 
-    if not await db.does_user_exist(id):
-        print(request.cookies.get("create"), flush=True)
-        if request.cookies.get("create") != "true":
-            return response
-        with open("default.png", "rb") as f:
-            pfp = f.read()
-        await db.add_user(id, "", "", "", "", pfp)
+    # if not await db.does_user_exist(id):
+    #     print(request.cookies.get("create"), flush=True)
+    #     if request.cookies.get("create") != "true":
+    #         return response
+    #     with open("default.png", "rb") as f:
+    #         pfp = f.read()
+    #     await db.add_user(id, "", "", "", "", pfp)
 
     code = await db.add_resolver_id(id)
     if not code:
