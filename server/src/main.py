@@ -54,18 +54,19 @@ async def init_db():
 async def home():
     return f"<h1>Starvation Backend :)</h1>"
 
+#@jwt_required
 @app.route("/sendCode", methods=["POST"])
-@jwt_required
 async def sendCode():
     data = await request.get_json()
     code = data["code"]
     pid = data["id"]
-    if pid != get_jwt_identity():
-        return "Unauthorized", 401
-    code = code
+#     if pid != get_jwt_identity():
+#         return "Unauthorized", 401
+#     code = code
     await db.submit_code(pid, code)
     return "OK", 200
 
+#@jwt_required
 @app.route("/sendCodeAI", methods=["POST"])
 # @jwt_required
 async def sendCodeAI():
@@ -73,9 +74,9 @@ async def sendCodeAI():
     code = data["code"]
     level = data["level"]
     pid = data["id"]
-    # if pid != get_jwt_identity():
-    #     return "Unauthorized", 401
-    code = code
+#     if pid != get_jwt_identity():
+#         return "Unauthorized", 401
+#     code = code
     return jsonify(dict(zip(("status", "output"), await runner(code, level))))
 
 @app.route("/getPlayers", methods=["GET"])

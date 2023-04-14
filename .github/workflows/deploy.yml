@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - ".github/workflows/**"
       - "server/**"
       - "runner/**"
       - "simulator/**"
@@ -213,8 +214,8 @@ jobs:
     - name: 'Get GKE credentials'
       uses: 'google-github-actions/get-gke-credentials@v1'
       with:
-        cluster_name: 'starvation'
-        location: 'asia-southeast1'
+        cluster_name: 'starvation-1'
+        location: 'asia-southeast1-a'
 
     - name: 'Upgrade Helm chart'
       run: |
